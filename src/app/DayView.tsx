@@ -4,11 +4,10 @@ function TaskRow({ completed, label }: { completed: boolean; label: string }) {
   return (
     <div className="flex items-center gap-3 text-[1.15rem]">
       <span
-        className={`inline-flex h-6 w-6 items-center justify-center rounded-full border ${
-          completed
+        className={`inline-flex h-6 w-6 items-center justify-center rounded-full border ${completed
             ? 'border-emerald-300 bg-emerald-300/20 text-emerald-200'
             : 'border-white/30 text-transparent'
-        }`}
+          }`}
       >
         •
       </span>
@@ -21,11 +20,10 @@ function MealRow({ done, label }: { done: boolean; label: string }) {
   return (
     <div className="flex items-center gap-3 text-[1.1rem]">
       <span
-        className={`inline-flex h-6 w-6 items-center justify-center rounded-full border ${
-          done
+        className={`inline-flex h-6 w-6 items-center justify-center rounded-full border ${done
             ? 'border-emerald-300 bg-emerald-300/20 text-emerald-200'
             : 'border-white/25 text-transparent'
-        }`}
+          }`}
       >
         •
       </span>
@@ -140,21 +138,19 @@ export default function DayView({ day }: { day: DayRecord }) {
                 <div className="rounded-[1.5rem] bg-white/8 border border-white/10 p-4 shadow-inner">
                   <div className="flex gap-3">
                     <div
-                      className={`w-[120px] h-[92px] rounded-2xl border border-white/10 flex items-center justify-center text-[2rem] ${
-                        day.meds.amDone
+                      className={`w-[120px] h-[92px] rounded-2xl border border-white/10 flex items-center justify-center text-[2rem] ${day.meds.amDone
                           ? 'bg-sky-200/20 text-white/90'
                           : 'bg-white/5 text-white/75'
-                      }`}
+                        }`}
                     >
                       AM
                     </div>
 
                     <div
-                      className={`w-[120px] h-[92px] rounded-2xl border border-white/10 flex items-center justify-center text-[2rem] ${
-                        day.meds.pmDone
+                      className={`w-[120px] h-[92px] rounded-2xl border border-white/10 flex items-center justify-center text-[2rem] ${day.meds.pmDone
                           ? 'bg-emerald-300/20 text-white/90'
                           : 'bg-white/5 text-white/75'
-                      }`}
+                        }`}
                     >
                       PM
                     </div>
@@ -164,8 +160,8 @@ export default function DayView({ day }: { day: DayRecord }) {
                     {day.meds.amDone && day.meds.pmDone
                       ? 'Done'
                       : day.meds.amDone
-                      ? 'Morning done'
-                      : 'Take now'}
+                        ? 'Morning done'
+                        : 'Take now'}
                   </div>
                 </div>
 
