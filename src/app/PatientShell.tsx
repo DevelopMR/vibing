@@ -1,31 +1,37 @@
+import { useState } from 'react'
+import DayView from './DayView'
+import { mockDays } from '../data/mockDays'
+
 export default function PatientShell() {
+  const [index, setIndex] = useState(1)
+
+  const currentDay = mockDays[index]
+
   return (
     <div className="w-screen h-screen bg-gradient-to-br from-slate-900 to-slate-800 text-white flex items-center justify-center">
-      <div className="w-[1200px] h-[700px] rounded-3xl bg-white/5 backdrop-blur-xl p-10">
-        <h1 className="text-6xl font-semibold">9:23 AM</h1>
-        <p className="text-xl opacity-70">Monday, March 24</p>
+      <div className="w-[1200px] h-[700px] rounded-3xl bg-white/5 backdrop-blur-xl overflow-hidden flex flex-col">
 
-        <div className="mt-10 grid grid-cols-2 gap-8">
-          <div>
-            <p className="text-sm opacity-50 mb-2">Health</p>
-            <div className="text-lg">Medication + Meals placeholder</div>
-          </div>
+        {/* Main Day Content */}
+        <DayView day={currentDay} />
 
-          <div>
-            <p className="text-sm opacity-50 mb-2">Tasks</p>
-            <div className="text-lg">Task list placeholder</div>
-          </div>
+        {/* Navigation */}
+        <div className="flex justify-between items-center px-8 pb-4 text-sm opacity-60">
+          <button onClick={() => setIndex(Math.max(0, index - 1))}>
+            ← Yesterday
+          </button>
 
-          <div>
-            <p className="text-sm opacity-50 mb-2">Weather</p>
-            <div className="text-lg">72° ☀️</div>
-          </div>
+          <button
+            onClick={() => setIndex(1)}
+            className="px-6 py-2 bg-white/10 rounded-full"
+          >
+            TODAY
+          </button>
 
-          <div>
-            <p className="text-sm opacity-50 mb-2">Message</p>
-            <div className="text-lg">Good morning, Wade.</div>
-          </div>
+          <button onClick={() => setIndex(Math.min(mockDays.length - 1, index + 1))}>
+            Tomorrow →
+          </button>
         </div>
+
       </div>
     </div>
   )
