@@ -14,9 +14,6 @@ export default function PatientShell() {
   const [showOvernight, setShowOvernight] = useState(false)
   const timeoutRef = useRef<number | null>(null)
 
-  const currentIndex = showOvernight ? 3 : index
-  const currentDay = mockDays[currentIndex]
-
   const canGoPrev = !showOvernight && index > 0
   const canGoNext = !showOvernight && index < 2
 
@@ -73,15 +70,12 @@ export default function PatientShell() {
   }
 
   const visibleDays: DayRecord[] = useMemo(() => {
-    if (showOvernight) return [mockDays[3]]
-
     return [mockDays[0], mockDays[1], mockDays[2]]
-  }, [showOvernight])
+  }, [])
 
-  const translateX = useMemo(() => {
-    if (showOvernight) return 0
-    return -index * 100
-  }, [index, showOvernight])
+  const frameCount = visibleDays.length
+  const frameWidthPercent = 100 / frameCount
+  const translatePercent = showOvernight ? 0 : -(index * frameWidthPercent)
 
   return (
     <div className="w-screen h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800 text-white flex items-center justify-center overflow-hidden">
@@ -89,37 +83,41 @@ export default function PatientShell() {
         {/* Dev toggle */}
         <button
           onClick={() => setShowOvernight((prev) => !prev)}
-          className="absolute top-5 right-5 z-20 rounded-full bg-white/10 px-4 py-2 text-xs tracking-wide text-white/80 hover:bg-white/15 transition"
+          className="absolute top-5 right-5 z-30 rounded-full bg-white/10 px-4 py-2 text-xs tracking-wide text-white/80 hover:bg-white/15 transition"
         >
           {showOvernight ? 'Exit Overnight' : 'Test Overnight'}
         </button>
 
-        {/* Sliding day strip */}
-        <div
-          className="absolute inset-0 flex transition-transform duration-700 ease-out"
-          style={{
-            width: `${visibleDays.length * 100}%`,
-            transform: `translateX(${translateX}%)`,
-          }}
-        >
-          {visibleDays.map((day) => (
-            <div
-              key={day.id}
-              className="h-full shrink-0"
-              style={{ width: `${100 / visibleDays.length}%` }}
-            >
-              <DayFrame day={day} />
-            </div>
-          ))}
-        </div>
-
-        {/* Navigation controls */}
-        {!showOvernight && (
+        {showOvernight ? (
+          <div className="absolute inset-0">
+            <DayFrame day={mockDays[3]} />
+          </div>
+        ) : (
           <>
+            {/* Sliding day strip */}
+            <div
+              className="absolute inset-0 flex transition-transform duration-700 ease-out"
+              style={{
+                width: `${frameCount * 100}%`,
+                transform: `translateX(${translatePercent}%)`,
+              }}
+            >
+              {visibleDays.map((day) => (
+                <div
+                  key={day.id}
+                  className="h-full shrink-0"
+                  style={{ width: `${frameWidthPercent}%` }}
+                >
+                  <DayFrame day={day} />
+                </div>
+              ))}
+            </div>
+
+            {/* Side arrows */}
             <button
               onClick={goPrev}
               disabled={!canGoPrev}
-              className="absolute left-5 top-1/2 -translate-y-1/2 z-10 text-5xl text-white/35 hover:text-white/60 disabled:opacity-20 transition"
+              className="absolute left-5 top-1/2 -translate-y-1/2 z-20 text-5xl text-white/35 hover:text-white/60 disabled:opacity-20 transition"
               aria-label="Go to previous day"
             >
               ‹
@@ -128,7 +126,7 @@ export default function PatientShell() {
             <button
               onClick={goNext}
               disabled={!canGoNext}
-              className="absolute right-5 top-1/2 -translate-y-1/2 z-10 text-5xl text-white/35 hover:text-white/60 disabled:opacity-20 transition"
+              className="absolute right-5 top-1/2 -translate-y-1/2 z-20 text-5xl text-white/35 hover:text-white/60 disabled:opacity-20 transition"
               aria-label="Go to next day"
             >
               ›
@@ -137,7 +135,7 @@ export default function PatientShell() {
         )}
 
         {/* Bottom navigation */}
-        <div className="absolute bottom-5 left-0 right-0 flex items-center justify-between px-10 z-10 text-white/70">
+        <div className="absolute bottom-5 left-0 right-0 flex items-center justify-between px-10 z-30 text-white/70">
           <button
             onClick={goPrev}
             disabled={!canGoPrev || showOvernight}
@@ -149,7 +147,7 @@ export default function PatientShell() {
           <button
             onClick={goToday}
             className="rounded-full bg-white/10 backdrop-blur-md px-8 py-3 text-[1.05rem] tracking-[0.14em] text-white/90 transition-transform duration-700 ease-out hover:bg-white/15"
-            style={{ transform: `translateX(${todayButtonOffset}px)` }}
+            style={{ transform: `translateX(${showOvernight ? 0 : todayButtonOffset}px)` }}
           >
             TODAY
           </button>
