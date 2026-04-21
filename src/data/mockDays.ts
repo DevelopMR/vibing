@@ -33,7 +33,7 @@ export type DayRecord = {
   mode: DayMode
 }
 
-export const mockDays: DayRecord[] = [
+export const dayRecords: DayRecord[] = [
   {
     id: '2026-03-23',
     dateLabel: 'Sunday, March 23',
@@ -134,33 +134,43 @@ export const mockDays: DayRecord[] = [
     },
     mode: 'future',
   },
+]
+
+export const overnightDayRecord: DayRecord = {
+  id: '2026-03-24-overnight',
+  dateLabel: 'Monday, March 24',
+  timeLabel: '10:12 PM',
+  weather: {
+    temp: '58°F',
+    condition: 'Clear night',
+    hourly: [],
+  },
+  nextLabel: 'Tomorrow',
+  nextTask: 'Clean Shoes',
+  tasks: [
+    { id: 't1', label: 'Clean Shoes', completed: false },
+    { id: 't2', label: 'Buy Milk', completed: false },
+    { id: 't3', label: 'Short Walk', completed: false },
+  ],
+  message: 'Good night, Dad. You did great today. Sleep well. I love you.',
+  meals: {
+    breakfast: true,
+    lunch: true,
+    dinner: true,
+    calories: '~1500',
+  },
+  meds: {
+    amDone: true,
+    pmDone: true,
+  },
+  mode: 'overnight',
+}
+
+export const todayDayRecord = dayRecords.find((day) => day.mode === 'current') ?? dayRecords[0]
+
+export const mockDays: DayRecord[] = [
+  ...dayRecords,
   {
-    id: '2026-03-24-overnight',
-    dateLabel: 'Monday, March 24',
-    timeLabel: '10:12 PM',
-    weather: {
-      temp: '58°F',
-      condition: 'Clear night',
-      hourly: [],
-    },
-    nextLabel: 'Tomorrow',
-    nextTask: 'Clean Shoes',
-    tasks: [
-      { id: 't1', label: 'Clean Shoes', completed: false },
-      { id: 't2', label: 'Buy Milk', completed: false },
-      { id: 't3', label: 'Short Walk', completed: false },
-    ],
-    message: 'Good night, Dad. You did great today. Sleep well. I love you.',
-    meals: {
-      breakfast: true,
-      lunch: true,
-      dinner: true,
-      calories: '~1500',
-    },
-    meds: {
-      amDone: true,
-      pmDone: true,
-    },
-    mode: 'overnight',
+    ...overnightDayRecord,
   },
 ]
