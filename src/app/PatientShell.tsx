@@ -8,6 +8,7 @@ import {
 } from '../data/mockDays'
 
 const AUTO_RETURN_MS = 5000
+const DRAG_COMMIT_THRESHOLD = 70
 
 function formatNavLabel(day: DayRecord | undefined, direction: 'prev' | 'next') {
   if (!day) {
@@ -20,7 +21,13 @@ function formatNavLabel(day: DayRecord | undefined, direction: 'prev' | 'next') 
 export default function PatientShell() {
   const [selectedDate, setSelectedDate] = useState(todayDayRecord.id)
   const [showOvernight, setShowOvernight] = useState(false)
+  const [dragOffsetPx, setDragOffsetPx] = useState(0)
+  const [isDragging, setIsDragging] = useState(false)
   const timeoutRef = useRef<number | null>(null)
+  const dragPointerIdRef = useRef<number | null>(null)
+  const dragStartXRef = useRef(0)
+  const dragDeltaRef = useRef(0)
+  const frameViewportRef = useRef<HTMLDivElement | null>(null)
 
   const loadedDays = useMemo(() => dayRecords, [])
   const todayDate = todayDayRecord.id
@@ -87,6 +94,35 @@ export default function PatientShell() {
   const frameCount = visibleDays.length
   const frameWidthPercent = 100 / frameCount
   const translatePercent = -(safeSelectedIndex * frameWidthPercent)
+  const dragTranslatePercent = frameViewportRef.current
+    ? (dragOffsetPx / frameViewportRef.current.clientWidth) * frameWidthPercent
+    : 0
+
+  const resetDragState = () => {
+    dragPointerIdRef.current = null
+    dragStartXRef.current = 0
+    dragDeltaRef.current = 0
+    setDragOffsetPx(0)
+    setIsDragging(false)
+  }
+
+  const commitDrag = () => {
+    const delta = dragDeltaRef.current
+
+    if (Math.abs(delta) < DRAG_COMMIT_THRESHOLD) {
+      resetDragState()
+      scheduleReturnToToday()
+      return
+    }
+
+    if (delta > 0 && canGoPrev) {
+      setSelectedDate(loadedDays[safeSelectedIndex - 1].id)
+    } else if (delta < 0 && canGoNext) {
+      setSelectedDate(loadedDays[safeSelectedIndex + 1].id)
+    }
+
+    resetDragState()
+  }
 
   return (
     <div className="flex h-screen w-screen items-center justify-center overflow-hidden bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800 px-6 py-6 text-white">
@@ -102,26 +138,68 @@ export default function PatientShell() {
         <>
           {/* Sliding day strip */}
           <div
-            className="absolute inset-0 flex transition-transform duration-700 ease-out"
-            style={{
-              width: `${frameCount * 100}%`,
-              transform: `translateX(${translatePercent}%)`,
+            ref={frameViewportRef}
+            className="absolute inset-0 touch-pan-y overflow-hidden"
+            onPointerDown={(event) => {
+              if (event.pointerType === 'mouse' && event.button !== 0) return
+              if ((event.target as HTMLElement).closest('button')) return
+
+              clearReturnTimer()
+              dragPointerIdRef.current = event.pointerId
+              dragStartXRef.current = event.clientX
+              dragDeltaRef.current = 0
+              setDragOffsetPx(0)
+              setIsDragging(true)
+              event.currentTarget.setPointerCapture(event.pointerId)
+            }}
+            onPointerMove={(event) => {
+              if (dragPointerIdRef.current !== event.pointerId) return
+
+              const nextDelta = event.clientX - dragStartXRef.current
+              const resistedDelta =
+                (nextDelta > 0 && !canGoPrev) || (nextDelta < 0 && !canGoNext)
+                  ? nextDelta * 0.35
+                  : nextDelta
+
+              dragDeltaRef.current = nextDelta
+              setDragOffsetPx(resistedDelta)
+            }}
+            onPointerUp={(event) => {
+              if (dragPointerIdRef.current !== event.pointerId) return
+              event.currentTarget.releasePointerCapture(event.pointerId)
+              commitDrag()
+            }}
+            onPointerCancel={(event) => {
+              if (dragPointerIdRef.current !== event.pointerId) return
+              event.currentTarget.releasePointerCapture(event.pointerId)
+              resetDragState()
+              scheduleReturnToToday()
             }}
           >
-            {visibleDays.map((day) => {
-              const shouldShowOvernight = showOvernight && day.id === todayDate
-              const frameDay = shouldShowOvernight ? overnightDayRecord : day
+            <div
+              className={`absolute inset-0 flex ${
+                isDragging ? '' : 'transition-transform duration-700 ease-out'
+              }`}
+              style={{
+                width: `${frameCount * 100}%`,
+                transform: `translateX(${translatePercent + dragTranslatePercent}%)`,
+              }}
+            >
+              {visibleDays.map((day) => {
+                const shouldShowOvernight = showOvernight && day.id === todayDate
+                const frameDay = shouldShowOvernight ? overnightDayRecord : day
 
-              return (
-                <div
-                  key={day.id}
-                  className="h-full shrink-0"
-                  style={{ width: `${frameWidthPercent}%` }}
-                >
-                  <DayFrame day={frameDay} />
-                </div>
-              )
-            })}
+                return (
+                  <div
+                    key={day.id}
+                    className="h-full shrink-0"
+                    style={{ width: `${frameWidthPercent}%` }}
+                  >
+                    <DayFrame day={frameDay} />
+                  </div>
+                )
+              })}
+            </div>
           </div>
 
           {/* Side arrows */}
