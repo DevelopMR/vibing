@@ -3,5 +3,11 @@
 @tailwind utilities;
 
 body {
+  margin: 0;
   font-family: Inter, system-ui, sans-serif;
+  background: #0f172a;
+}
+
+#root {
+  min-height: 100vh;
 }

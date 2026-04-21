@@ -27,7 +27,6 @@ export default function PatientShell() {
   const todayIndex = loadedDays.findIndex((day) => day.id === todayDate)
   const selectedIndex = loadedDays.findIndex((day) => day.id === selectedDate)
   const safeSelectedIndex = selectedIndex >= 0 ? selectedIndex : todayIndex
-  const selectedDay = loadedDays[safeSelectedIndex] ?? todayDayRecord
 
   const canGoPrev = safeSelectedIndex > 0
   const canGoNext = safeSelectedIndex < loadedDays.length - 1
@@ -90,12 +89,12 @@ export default function PatientShell() {
   const translatePercent = -(safeSelectedIndex * frameWidthPercent)
 
   return (
-    <div className="w-screen h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800 text-white flex items-center justify-center overflow-hidden">
-      <div className="relative w-[1200px] h-[700px] rounded-[2rem] bg-white/5 backdrop-blur-xl overflow-hidden shadow-2xl border border-white/5">
+    <div className="flex h-screen w-screen items-center justify-center overflow-hidden bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800 px-6 py-6 text-white">
+      <div className="relative h-[720px] w-[1280px] overflow-hidden rounded-[2.2rem] border border-white/5 bg-white/5 shadow-2xl backdrop-blur-xl">
         {/* Dev toggle */}
         <button
           onClick={() => setShowOvernight((prev) => !prev)}
-          className="absolute top-5 right-5 z-30 rounded-full bg-white/10 px-4 py-2 text-xs tracking-wide text-white/80 hover:bg-white/15 transition"
+          className="absolute right-6 top-6 z-30 rounded-full bg-white/10 px-4 py-2 text-xs tracking-wide text-white/80 transition hover:bg-white/15"
         >
           {showOvernight ? 'Hide Overnight' : 'Test Overnight'}
         </button>
@@ -129,7 +128,7 @@ export default function PatientShell() {
           <button
             onClick={goPrev}
             disabled={!canGoPrev}
-            className="absolute left-5 top-1/2 -translate-y-1/2 z-20 text-5xl text-white/35 hover:text-white/60 disabled:opacity-20 transition"
+            className="absolute left-4 top-[52%] z-20 -translate-y-1/2 text-5xl text-white/35 transition hover:text-white/60 disabled:opacity-20"
             aria-label={previousDay ? `Go to ${previousDay.dateLabel}` : 'No previous day loaded'}
           >
             ‹
@@ -138,7 +137,7 @@ export default function PatientShell() {
           <button
             onClick={goNext}
             disabled={!canGoNext}
-            className="absolute right-5 top-1/2 -translate-y-1/2 z-20 text-5xl text-white/35 hover:text-white/60 disabled:opacity-20 transition"
+            className="absolute right-4 top-[52%] z-20 -translate-y-1/2 text-5xl text-white/35 transition hover:text-white/60 disabled:opacity-20"
             aria-label={nextDay ? `Go to ${nextDay.dateLabel}` : 'No next day loaded'}
           >
             ›
@@ -146,18 +145,19 @@ export default function PatientShell() {
         </>
 
         {/* Bottom navigation */}
-        <div className="absolute bottom-5 left-0 right-0 flex items-center justify-between px-10 z-30 text-white/70">
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 z-20 h-28 bg-gradient-to-t from-slate-950/35 via-slate-900/10 to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 z-30 flex items-end justify-between px-10 pb-7 text-white/72">
           <button
             onClick={goPrev}
             disabled={!canGoPrev}
-            className="text-[1.05rem] hover:text-white disabled:opacity-25 transition"
+            className="min-w-[250px] text-left text-[1rem] transition hover:text-white disabled:opacity-25"
           >
             {formatNavLabel(previousDay, 'prev')}
           </button>
 
           <button
             onClick={goToday}
-            className="rounded-full bg-white/10 backdrop-blur-md px-8 py-3 text-[1.05rem] tracking-[0.14em] text-white/90 transition-transform duration-700 ease-out hover:bg-white/15"
+            className="rounded-full bg-white/10 px-9 py-3 text-[1rem] tracking-[0.14em] text-white/90 backdrop-blur-md transition-transform duration-700 ease-out hover:bg-white/15"
             style={{ transform: `translateX(${todayButtonOffset}px)` }}
           >
             TODAY
@@ -166,7 +166,7 @@ export default function PatientShell() {
           <button
             onClick={goNext}
             disabled={!canGoNext}
-            className="text-[1.05rem] hover:text-white disabled:opacity-25 transition"
+            className="min-w-[250px] text-right text-[1rem] transition hover:text-white disabled:opacity-25"
           >
             {formatNavLabel(nextDay, 'next')}
           </button>

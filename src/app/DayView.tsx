@@ -38,20 +38,19 @@ export default function DayView({ day }: { day: DayRecord }) {
   const isOvernight = day.mode === 'overnight'
   const isPast = day.mode === 'past'
   const isFuture = day.mode === 'future'
+  const weatherIcon = isPast ? '🌤️' : isFuture ? '⛅' : '☀️'
 
   return (
-    <div className="relative w-full h-full px-14 pt-14 pb-24">
-      {/* Calendar icon */}
+    <div className="relative h-full w-full px-14 pb-28 pt-14">
       <button
-        className="absolute left-8 top-8 inline-flex h-11 w-11 items-center justify-center rounded-xl bg-white/10 text-white/90 backdrop-blur-md border border-white/10"
+        className="absolute left-8 top-8 inline-flex h-11 w-11 items-center justify-center rounded-xl border border-white/10 bg-white/10 text-white/90 backdrop-blur-md"
         aria-label="Open calendar"
       >
         <span className="text-xl">🗓️</span>
       </button>
 
-      {/* OVERNIGHT MODE */}
       {isOvernight ? (
-        <div className="h-full flex flex-col justify-between">
+        <div className="flex h-full flex-col justify-between gap-12">
           <div className="flex items-start justify-between">
             <div>
               <div className="text-[4.5rem] leading-none font-semibold tracking-tight">
@@ -60,7 +59,7 @@ export default function DayView({ day }: { day: DayRecord }) {
               <div className="mt-2 text-[1.95rem] text-white/75">{day.dateLabel}</div>
             </div>
 
-            <div className="w-[280px] rounded-3xl bg-white/5 border border-white/10 p-6">
+            <div className="w-[280px] rounded-3xl border border-white/10 bg-white/5 p-6">
               <div className="text-sm uppercase tracking-[0.16em] text-white/45">
                 Tomorrow
               </div>
@@ -80,7 +79,7 @@ export default function DayView({ day }: { day: DayRecord }) {
           </div>
 
           <div className="flex justify-end">
-            <div className="w-[430px] rounded-[2rem] bg-white/8 border border-white/10 px-8 py-8 text-right">
+            <div className="w-[430px] rounded-[2rem] border border-white/10 bg-white/8 px-8 py-8 text-right">
               <div className="text-[2.2rem] text-white/92">Good night, Dad.</div>
               <div className="mt-5 text-[1.55rem] leading-relaxed text-white/80">
                 You did great today.
@@ -92,30 +91,28 @@ export default function DayView({ day }: { day: DayRecord }) {
           </div>
         </div>
       ) : (
-        <div className="h-full grid grid-cols-[1.2fr_0.8fr] gap-10">
-          {/* LEFT SIDE */}
-          <div className="flex flex-col justify-between">
-            <div>
+        <div className="grid h-full grid-cols-[minmax(0,1.28fr)_minmax(320px,0.82fr)] grid-rows-[auto_minmax(0,1fr)] gap-x-10 gap-y-8">
+          <div className="row-span-2 flex flex-col gap-8">
+            <div className="pt-1">
               <div className="text-[5.2rem] leading-none font-semibold tracking-tight">
                 {day.timeLabel}
               </div>
               <div className="mt-3 text-[2rem] text-white/75">{day.dateLabel}</div>
 
-              <div className="mt-10 flex items-start gap-8">
-                <div>
-                  <div className="flex items-center gap-3">
-                    <span className="text-5xl">
-                      {isPast ? '🌤️' : isFuture ? '⛅' : '☀️'}
-                    </span>
+              <div className="mt-10 flex items-start gap-10">
+                <div className="min-w-[180px]">
+                  <div className="flex items-center gap-4">
+                    <span className="text-5xl">{weatherIcon}</span>
                     <span className="text-[2.35rem] text-white/92">{day.weather.temp}</span>
                   </div>
+                  <div className="mt-2 text-[1.1rem] text-white/58">{day.weather.condition}</div>
                 </div>
 
-                <div className="flex flex-col gap-3">
+                <div className="flex min-w-0 flex-col gap-3">
                   {day.weather.hourly.length > 0 && (
                     <div className="flex items-end gap-5 text-white/80">
                       {day.weather.hourly.map((hour) => (
-                        <div key={hour.time} className="text-center">
+                        <div key={hour.time} className="min-w-[54px] text-center">
                           <div className="text-2xl">{hour.icon}</div>
                           <div className="mt-1 text-sm">{hour.time}</div>
                           {hour.temp && <div className="text-sm">{hour.temp}</div>}
@@ -131,65 +128,58 @@ export default function DayView({ day }: { day: DayRecord }) {
               </div>
             </div>
 
-            {/* Lower left */}
-            <div className="rounded-[1.75rem] bg-white/5 border border-white/10 px-8 py-7">
+            <div className="grid min-h-0 flex-1 grid-cols-[minmax(0,0.96fr)_minmax(240px,0.74fr)] items-stretch gap-8 rounded-[1.9rem] border border-white/10 bg-white/5 px-8 py-7">
               <div className="text-[1rem] uppercase tracking-[0.14em] text-white/45">Meds</div>
+              <div className="text-[1rem] uppercase tracking-[0.14em] text-white/45">Meals</div>
 
-              <div className="mt-4 flex items-start gap-8">
-                {/* Pillbox visual centerpiece */}
-                <div className="rounded-[1.5rem] bg-white/8 border border-white/10 p-4 shadow-inner">
-                  <div className="flex gap-3">
-                    <div
-                      className={`w-[120px] h-[92px] rounded-2xl border border-white/10 flex items-center justify-center text-[2rem] ${
-                        day.meds.amDone
-                          ? 'bg-sky-200/20 text-white/90'
-                          : 'bg-white/5 text-white/75'
-                      }`}
-                    >
-                      AM
-                    </div>
-
-                    <div
-                      className={`w-[120px] h-[92px] rounded-2xl border border-white/10 flex items-center justify-center text-[2rem] ${
-                        day.meds.pmDone
-                          ? 'bg-emerald-300/20 text-white/90'
-                          : 'bg-white/5 text-white/75'
-                      }`}
-                    >
-                      PM
-                    </div>
+              <div className="flex min-h-0 flex-col rounded-[1.5rem] border border-white/10 bg-white/8 p-4 shadow-inner">
+                <div className="flex gap-3">
+                  <div
+                    className={`flex h-[92px] w-[120px] items-center justify-center rounded-2xl border border-white/10 text-[2rem] ${
+                      day.meds.amDone
+                        ? 'bg-sky-200/20 text-white/90'
+                        : 'bg-white/5 text-white/75'
+                    }`}
+                  >
+                    AM
                   </div>
 
-                  <div className="mt-4 text-[1.55rem] text-white/80">
-                    {day.meds.amDone && day.meds.pmDone
-                      ? 'Done'
-                      : day.meds.amDone
-                      ? 'Morning done'
-                      : 'Take now'}
+                  <div
+                    className={`flex h-[92px] w-[120px] items-center justify-center rounded-2xl border border-white/10 text-[2rem] ${
+                      day.meds.pmDone
+                        ? 'bg-emerald-300/20 text-white/90'
+                        : 'bg-white/5 text-white/75'
+                    }`}
+                  >
+                    PM
                   </div>
                 </div>
 
-                {/* Meals simple text */}
-                <div className="pt-2">
-                  <div className="text-[1rem] uppercase tracking-[0.14em] text-white/45">Meals</div>
+                <div className="mt-auto pt-6 text-[1.55rem] text-white/80">
+                  {day.meds.amDone && day.meds.pmDone
+                    ? 'Done'
+                    : day.meds.amDone
+                      ? 'Morning done'
+                      : 'Take now'}
+                </div>
+              </div>
 
-                  <div className="mt-4 space-y-3">
-                    <MealRow done={day.meals.breakfast} label="Breakfast" />
-                    <MealRow done={day.meals.lunch} label="Lunch" />
-                    <MealRow done={day.meals.dinner} label="Dinner" />
-                  </div>
+              <div className="flex min-h-0 flex-col pt-1">
+                <div className="space-y-3">
+                  <MealRow done={day.meals.breakfast} label="Breakfast" />
+                  <MealRow done={day.meals.lunch} label="Lunch" />
+                  <MealRow done={day.meals.dinner} label="Dinner" />
+                </div>
 
-                  <div className="mt-6 text-[1.15rem] text-white/65">
-                    Calories: {day.meals.calories}
-                  </div>
+                <div className="mt-auto pt-6 text-[1.15rem] text-white/65">
+                  Calories: {day.meals.calories}
                 </div>
               </div>
             </div>
           </div>
 
-          {/* RIGHT SIDE */}
-          <div className="flex flex-col justify-between">
-            <div className="rounded-[1.75rem] bg-white/5 border border-white/10 px-8 py-7">
+          <div className="self-start rounded-[1.9rem] border border-white/10 bg-white/5 px-8 py-7">
+            <div className="min-h-[278px]">
               <div className="text-[1rem] uppercase tracking-[0.14em] text-white/45">
                 {day.nextLabel}
               </div>
@@ -201,8 +191,10 @@ export default function DayView({ day }: { day: DayRecord }) {
                 ))}
               </div>
             </div>
+          </div>
 
-            <div className="rounded-[1.75rem] bg-white/5 border border-white/10 px-8 py-7">
+          <div className="flex min-h-0 items-end">
+            <div className="w-full rounded-[1.9rem] border border-white/10 bg-white/5 px-8 py-7">
               <div className="flex items-start gap-4">
                 <span className="text-3xl text-white/55">💬</span>
                 <div className="text-[1.65rem] leading-relaxed text-white/90">
@@ -211,7 +203,7 @@ export default function DayView({ day }: { day: DayRecord }) {
               </div>
 
               {(isPast || isFuture) && (
-                <div className="mt-6 flex gap-3 justify-end text-2xl text-white/60">
+                <div className="mt-6 flex justify-end gap-3 text-2xl text-white/60">
                   <span>🖼️</span>
                 </div>
               )}
