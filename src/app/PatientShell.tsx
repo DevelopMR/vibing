@@ -126,105 +126,105 @@ export default function PatientShell() {
 
   return (
     <div className="flex h-screen w-screen items-center justify-center overflow-hidden bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800 px-6 py-6 text-white">
-      <div className="relative h-[720px] w-[1280px] overflow-hidden rounded-[2.2rem] border border-white/5 bg-white/5 shadow-2xl backdrop-blur-xl">
-        {/* Dev toggle */}
-        <button
-          onClick={() => setShowOvernight((prev) => !prev)}
-          className="absolute right-6 top-6 z-30 rounded-full bg-white/10 px-4 py-2 text-xs tracking-wide text-white/80 transition hover:bg-white/15"
-        >
-          {showOvernight ? 'Hide Overnight' : 'Test Overnight'}
-        </button>
-
-        <>
-          {/* Sliding day strip */}
-          <div
-            ref={frameViewportRef}
-            className="absolute inset-0 touch-pan-y overflow-hidden"
-            onPointerDown={(event) => {
-              if (event.pointerType === 'mouse' && event.button !== 0) return
-              if ((event.target as HTMLElement).closest('button')) return
-
-              clearReturnTimer()
-              dragPointerIdRef.current = event.pointerId
-              dragStartXRef.current = event.clientX
-              dragDeltaRef.current = 0
-              setDragOffsetPx(0)
-              setIsDragging(true)
-              event.currentTarget.setPointerCapture(event.pointerId)
-            }}
-            onPointerMove={(event) => {
-              if (dragPointerIdRef.current !== event.pointerId) return
-
-              const nextDelta = event.clientX - dragStartXRef.current
-              const resistedDelta =
-                (nextDelta > 0 && !canGoPrev) || (nextDelta < 0 && !canGoNext)
-                  ? nextDelta * 0.35
-                  : nextDelta
-
-              dragDeltaRef.current = nextDelta
-              setDragOffsetPx(resistedDelta)
-            }}
-            onPointerUp={(event) => {
-              if (dragPointerIdRef.current !== event.pointerId) return
-              event.currentTarget.releasePointerCapture(event.pointerId)
-              commitDrag()
-            }}
-            onPointerCancel={(event) => {
-              if (dragPointerIdRef.current !== event.pointerId) return
-              event.currentTarget.releasePointerCapture(event.pointerId)
-              resetDragState()
-              scheduleReturnToToday()
-            }}
+      <div className="flex w-[1280px] flex-col gap-6">
+        <div className="relative h-[708px] overflow-hidden rounded-[2.2rem] border border-white/5 bg-white/5 shadow-2xl backdrop-blur-xl">
+          {/* Dev toggle */}
+          <button
+            onClick={() => setShowOvernight((prev) => !prev)}
+            className="absolute right-6 top-6 z-30 rounded-full bg-white/10 px-4 py-2 text-xs tracking-wide text-white/80 transition hover:bg-white/15"
           >
+            {showOvernight ? 'Hide Overnight' : 'Test Overnight'}
+          </button>
+
+          <>
+            {/* Sliding day strip */}
             <div
-              className={`absolute inset-0 flex ${
-                isDragging ? '' : 'transition-transform duration-700 ease-out'
-              }`}
-              style={{
-                width: `${frameCount * 100}%`,
-                transform: `translateX(${translatePercent + dragTranslatePercent}%)`,
+              ref={frameViewportRef}
+              className="absolute inset-0 touch-pan-y overflow-hidden"
+              onPointerDown={(event) => {
+                if (event.pointerType === 'mouse' && event.button !== 0) return
+                if ((event.target as HTMLElement).closest('button')) return
+
+                clearReturnTimer()
+                dragPointerIdRef.current = event.pointerId
+                dragStartXRef.current = event.clientX
+                dragDeltaRef.current = 0
+                setDragOffsetPx(0)
+                setIsDragging(true)
+                event.currentTarget.setPointerCapture(event.pointerId)
+              }}
+              onPointerMove={(event) => {
+                if (dragPointerIdRef.current !== event.pointerId) return
+
+                const nextDelta = event.clientX - dragStartXRef.current
+                const resistedDelta =
+                  (nextDelta > 0 && !canGoPrev) || (nextDelta < 0 && !canGoNext)
+                    ? nextDelta * 0.35
+                    : nextDelta
+
+                dragDeltaRef.current = nextDelta
+                setDragOffsetPx(resistedDelta)
+              }}
+              onPointerUp={(event) => {
+                if (dragPointerIdRef.current !== event.pointerId) return
+                event.currentTarget.releasePointerCapture(event.pointerId)
+                commitDrag()
+              }}
+              onPointerCancel={(event) => {
+                if (dragPointerIdRef.current !== event.pointerId) return
+                event.currentTarget.releasePointerCapture(event.pointerId)
+                resetDragState()
+                scheduleReturnToToday()
               }}
             >
-              {visibleDays.map((day) => {
-                const shouldShowOvernight = showOvernight && day.id === todayDate
-                const frameDay = shouldShowOvernight ? overnightDayRecord : day
+              <div
+                className={`absolute inset-0 flex ${
+                  isDragging ? '' : 'transition-transform duration-700 ease-out'
+                }`}
+                style={{
+                  width: `${frameCount * 100}%`,
+                  transform: `translateX(${translatePercent + dragTranslatePercent}%)`,
+                }}
+              >
+                {visibleDays.map((day) => {
+                  const shouldShowOvernight = showOvernight && day.id === todayDate
+                  const frameDay = shouldShowOvernight ? overnightDayRecord : day
 
-                return (
-                  <div
-                    key={day.id}
-                    className="h-full shrink-0"
-                    style={{ width: `${frameWidthPercent}%` }}
-                  >
-                    <DayFrame day={frameDay} />
-                  </div>
-                )
-              })}
+                  return (
+                    <div
+                      key={day.id}
+                      className="h-full shrink-0"
+                      style={{ width: `${frameWidthPercent}%` }}
+                    >
+                      <DayFrame day={frameDay} />
+                    </div>
+                  )
+                })}
+              </div>
             </div>
-          </div>
 
-          {/* Side arrows */}
-          <button
-            onClick={goPrev}
-            disabled={!canGoPrev}
-            className="absolute left-4 top-[52%] z-20 -translate-y-1/2 text-5xl text-white/35 transition hover:text-white/60 disabled:opacity-20"
-            aria-label={previousDay ? `Go to ${previousDay.dateLabel}` : 'No previous day loaded'}
-          >
-            ‹
-          </button>
+            {/* Side arrows */}
+            <button
+              onClick={goPrev}
+              disabled={!canGoPrev}
+              className="absolute left-4 top-[52%] z-20 -translate-y-1/2 text-5xl text-white/35 transition hover:text-white/60 disabled:opacity-20"
+              aria-label={previousDay ? `Go to ${previousDay.dateLabel}` : 'No previous day loaded'}
+            >
+              ‹
+            </button>
 
-          <button
-            onClick={goNext}
-            disabled={!canGoNext}
-            className="absolute right-4 top-[52%] z-20 -translate-y-1/2 text-5xl text-white/35 transition hover:text-white/60 disabled:opacity-20"
-            aria-label={nextDay ? `Go to ${nextDay.dateLabel}` : 'No next day loaded'}
-          >
-            ›
-          </button>
-        </>
+            <button
+              onClick={goNext}
+              disabled={!canGoNext}
+              className="absolute right-4 top-[52%] z-20 -translate-y-1/2 text-5xl text-white/35 transition hover:text-white/60 disabled:opacity-20"
+              aria-label={nextDay ? `Go to ${nextDay.dateLabel}` : 'No next day loaded'}
+            >
+              ›
+            </button>
+          </>
+        </div>
 
-        {/* Bottom navigation */}
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 z-20 h-28 bg-gradient-to-t from-slate-950/35 via-slate-900/10 to-transparent" />
-        <div className="absolute bottom-0 left-0 right-0 z-30 flex items-end justify-between px-10 pb-7 text-white/72">
+        <div className="flex items-center justify-between px-10 text-white/72">
           <button
             onClick={goPrev}
             disabled={!canGoPrev}

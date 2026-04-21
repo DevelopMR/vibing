@@ -41,7 +41,7 @@ export default function DayView({ day }: { day: DayRecord }) {
   const weatherIcon = isPast ? '🌤️' : isFuture ? '⛅' : '☀️'
 
   return (
-    <div className="relative h-full w-full px-14 pb-28 pt-14">
+    <div className="relative h-full w-full px-16 pb-16 pt-14">
       <button
         className="absolute left-8 top-8 inline-flex h-11 w-11 items-center justify-center rounded-xl border border-white/10 bg-white/10 text-white/90 backdrop-blur-md"
         aria-label="Open calendar"
@@ -91,16 +91,16 @@ export default function DayView({ day }: { day: DayRecord }) {
           </div>
         </div>
       ) : (
-        <div className="grid h-full grid-cols-[minmax(0,1.28fr)_minmax(320px,0.82fr)] grid-rows-[auto_minmax(0,1fr)] gap-x-10 gap-y-8">
-          <div className="row-span-2 flex flex-col gap-8">
+        <div className="grid h-full grid-cols-[minmax(0,1.22fr)_minmax(360px,0.82fr)] grid-rows-[auto_minmax(0,1fr)] gap-x-12 gap-y-8">
+          <div className="row-span-2 flex flex-col gap-10">
             <div className="pt-1">
               <div className="text-[5.2rem] leading-none font-semibold tracking-tight">
                 {day.timeLabel}
               </div>
               <div className="mt-3 text-[2rem] text-white/75">{day.dateLabel}</div>
 
-              <div className="mt-10 flex items-start gap-10">
-                <div className="min-w-[180px]">
+              <div className="mt-10 flex items-start gap-11">
+                <div className="min-w-[188px]">
                   <div className="flex items-center gap-4">
                     <span className="text-5xl">{weatherIcon}</span>
                     <span className="text-[2.35rem] text-white/92">{day.weather.temp}</span>
@@ -108,9 +108,9 @@ export default function DayView({ day }: { day: DayRecord }) {
                   <div className="mt-2 text-[1.1rem] text-white/58">{day.weather.condition}</div>
                 </div>
 
-                <div className="flex min-w-0 flex-col gap-3">
+                <div className="flex min-w-0 flex-col gap-4">
                   {day.weather.hourly.length > 0 && (
-                    <div className="flex items-end gap-5 text-white/80">
+                    <div className="flex items-end gap-6 text-white/80">
                       {day.weather.hourly.map((hour) => (
                         <div key={hour.time} className="min-w-[54px] text-center">
                           <div className="text-2xl">{hour.icon}</div>
@@ -128,58 +128,60 @@ export default function DayView({ day }: { day: DayRecord }) {
               </div>
             </div>
 
-            <div className="grid min-h-0 flex-1 grid-cols-[minmax(0,0.96fr)_minmax(240px,0.74fr)] items-stretch gap-8 rounded-[1.9rem] border border-white/10 bg-white/5 px-8 py-7">
-              <div className="text-[1rem] uppercase tracking-[0.14em] text-white/45">Meds</div>
-              <div className="text-[1rem] uppercase tracking-[0.14em] text-white/45">Meals</div>
+            <div className="mr-2 rounded-[1.95rem] border border-white/10 bg-white/5 px-10 py-9">
+              <div className="grid min-h-[308px] grid-cols-[minmax(286px,1fr)_minmax(230px,0.72fr)] gap-x-10 gap-y-6">
+                <div className="text-[1rem] uppercase tracking-[0.14em] text-white/45">Meds</div>
+                <div className="text-[1rem] uppercase tracking-[0.14em] text-white/45">Meals</div>
 
-              <div className="flex min-h-0 flex-col rounded-[1.5rem] border border-white/10 bg-white/8 p-4 shadow-inner">
-                <div className="flex gap-3">
-                  <div
-                    className={`flex h-[92px] w-[120px] items-center justify-center rounded-2xl border border-white/10 text-[2rem] ${
-                      day.meds.amDone
-                        ? 'bg-sky-200/20 text-white/90'
-                        : 'bg-white/5 text-white/75'
-                    }`}
-                  >
-                    AM
+                <div className="flex min-h-[232px] flex-col justify-between rounded-[1.55rem] border border-white/10 bg-white/6 px-7 py-7 shadow-inner">
+                  <div className="flex gap-4">
+                    <div
+                      className={`flex h-[92px] w-[120px] items-center justify-center rounded-2xl border border-white/10 text-[2rem] ${
+                        day.meds.amDone
+                          ? 'bg-sky-200/20 text-white/90'
+                          : 'bg-white/5 text-white/75'
+                      }`}
+                    >
+                      AM
+                    </div>
+
+                    <div
+                      className={`flex h-[92px] w-[120px] items-center justify-center rounded-2xl border border-white/10 text-[2rem] ${
+                        day.meds.pmDone
+                          ? 'bg-emerald-300/20 text-white/90'
+                          : 'bg-white/5 text-white/75'
+                      }`}
+                    >
+                      PM
+                    </div>
                   </div>
 
-                  <div
-                    className={`flex h-[92px] w-[120px] items-center justify-center rounded-2xl border border-white/10 text-[2rem] ${
-                      day.meds.pmDone
-                        ? 'bg-emerald-300/20 text-white/90'
-                        : 'bg-white/5 text-white/75'
-                    }`}
-                  >
-                    PM
+                  <div className="pt-4 text-[1.5rem] leading-none text-white/80">
+                    {day.meds.amDone && day.meds.pmDone
+                      ? 'Done'
+                      : day.meds.amDone
+                        ? 'Morning done'
+                        : 'Take now'}
                   </div>
                 </div>
 
-                <div className="mt-auto pt-6 text-[1.55rem] text-white/80">
-                  {day.meds.amDone && day.meds.pmDone
-                    ? 'Done'
-                    : day.meds.amDone
-                      ? 'Morning done'
-                      : 'Take now'}
-                </div>
-              </div>
+                <div className="flex min-h-[232px] flex-col pt-1">
+                  <div className="space-y-4">
+                    <MealRow done={day.meals.breakfast} label="Breakfast" />
+                    <MealRow done={day.meals.lunch} label="Lunch" />
+                    <MealRow done={day.meals.dinner} label="Dinner" />
+                  </div>
 
-              <div className="flex min-h-0 flex-col pt-1">
-                <div className="space-y-3">
-                  <MealRow done={day.meals.breakfast} label="Breakfast" />
-                  <MealRow done={day.meals.lunch} label="Lunch" />
-                  <MealRow done={day.meals.dinner} label="Dinner" />
-                </div>
-
-                <div className="mt-auto pt-6 text-[1.15rem] text-white/65">
-                  Calories: {day.meals.calories}
+                  <div className="mt-auto pt-8 text-[1.15rem] text-white/65">
+                    Calories: {day.meals.calories}
+                  </div>
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="self-start rounded-[1.9rem] border border-white/10 bg-white/5 px-8 py-7">
-            <div className="min-h-[278px]">
+          <div className="self-start rounded-[1.95rem] border border-white/10 bg-white/5 px-9 py-8">
+            <div className="min-h-[252px]">
               <div className="text-[1rem] uppercase tracking-[0.14em] text-white/45">
                 {day.nextLabel}
               </div>
@@ -193,8 +195,8 @@ export default function DayView({ day }: { day: DayRecord }) {
             </div>
           </div>
 
-          <div className="flex min-h-0 items-end">
-            <div className="w-full rounded-[1.9rem] border border-white/10 bg-white/5 px-8 py-7">
+          <div className="self-end">
+            <div className="w-full rounded-[1.95rem] border border-white/10 bg-white/5 px-9 py-8">
               <div className="flex items-start gap-4">
                 <span className="text-3xl text-white/55">💬</span>
                 <div className="text-[1.65rem] leading-relaxed text-white/90">
