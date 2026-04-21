@@ -166,23 +166,29 @@ This is the immediate blocker and the current Phase 1 focus.
 ### 2. Fix day-strip width and translate math
 This sits inside the navigation-foundation work.
 
-### 3. Add drag/pointer navigation
-After landing positions are correct.
+### 3. Expand local test data to about two weeks on either side of today
+This should happen once the rolling navigation model is stable enough to validate the feel across a realistic date range.
 
-### 4. Improve shell polish toward approved mock
+### 4. Add drag/pointer navigation
+After landing positions are correct and the wider rolling range is in place.
+
+### 5. Replace snapback with guided rollback to today
+The return should move through intervening days with calm motion and synchronized bottom-nav feedback rather than jolting directly home.
+
+### 6. Improve shell polish toward approved mock
 Focus on:
 - typography
 - panel softness
 - meds/meals clarity
 - bedtime simplification
 
-### 5. Add local wallpaper system
+### 7. Add local wallpaper system
 Start with a local curated set.
 
-### 6. Add content-open behavior
+### 8. Add content-open behavior
 Needed especially for past-day images.
 
-### 7. Add calendar overlay shell
+### 9. Add calendar overlay shell
 With a caregiver unlock stub.
 
 ---
@@ -205,11 +211,30 @@ The prototype is still testing:
 The prototype phase is successful when:
 - the frame strip lands correctly
 - navigation feels understandable
-- navigation can move across a rolling date range without feeling capped at three fixed frames
+- navigation can later move across a rolling date range without feeling capped at three fixed frames
 - today rollback is reliable
 - current/past/future/overnight each feel distinct
 - overnight behaves as a visual state on today rather than a separate navigable view
 - the UI looks close enough to the approved design direction to judge product viability
+
+## Current Phase Breakdown
+
+### Phase 1: Navigation Foundation
+- canonical date-based shell state
+- rolling day-window model
+- stable frame landing
+- overnight remains a visual state on today only
+- simple, reliable return-to-today behavior is acceptable as a temporary implementation
+
+### Phase 2: Range Expansion And Drag
+- expand local mock data to roughly 14 days before and after today
+- validate weighted rolling feel across a realistic date span
+- add pointer/drag navigation
+
+### Phase 3: Guided Return-To-Today
+- replace snapback with animated rollback through intervening days
+- use pleasant motion curves to preserve orientation
+- keep bottom navigation controls synchronized during rollback
 
 ---
 

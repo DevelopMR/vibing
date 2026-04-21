@@ -232,20 +232,35 @@ In order:
 
 1. Rebuild the navigation foundation around a rolling day-strip model.
 2. Stabilize frame landing and strip math.
-3. Add drag/pointer day navigation.
-4. Keep rollback to today reliable.
-5. Improve UI polish toward approved mock direction.
-6. Add local wallpapers.
-7. Add content-open behavior for attachments/messages.
-8. Add calendar overlay shell and caregiver unlock stub.
+3. Add a wider local date range around today to test rolling continuity.
+4. Add drag/pointer day navigation.
+5. Replace simple return-to-today with guided animated rollback through intervening days.
+6. Improve UI polish toward approved mock direction.
+7. Add local wallpapers.
+8. Add content-open behavior for attachments/messages.
+9. Add calendar overlay shell and caregiver unlock stub.
 
 ### Phase 1 success criteria
 The navigation foundation phase is successful when:
 - the strip lands only on full-day boundaries
 - the selected day is an explicit date identity rather than a hard-coded array slot
-- navigation can move across a rolling range of days
 - return-to-today behavior is reliable
 - overnight can be applied to today without introducing a separate frame or breaking navigation
+
+### Phase 2 focus
+The rolling-range and drag phase should:
+- expand local test data to roughly two weeks before and two weeks after today
+- validate that navigation still feels smooth and legible across a realistic date span
+- add pointer/drag navigation on top of the stabilized strip model
+- keep past-day data and future weather preloaded enough to support a weighted rolling feel
+
+### Phase 3 focus
+The guided return-to-today phase should:
+- roll back through intervening days rather than teleporting directly to today
+- use calm acceleration/deceleration curves to support orientation
+- keep the bottom navigation labels and controls synchronized while the strip is returning
+- preserve a clear sense of place in the calendar during rollback
+- define how rollback pauses, resumes, or cancels when the user interacts
 
 ---
 
