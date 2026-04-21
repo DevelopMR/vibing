@@ -9,7 +9,9 @@ import {
 
 const AUTO_RETURN_MS = 5000
 const DRAG_COMMIT_THRESHOLD = 70
-const GUIDED_RETURN_STEP_MS = 650
+const MANUAL_TRANSITION_MS = 700
+const GUIDED_RETURN_TRANSITION_MS = 520
+const GUIDED_RETURN_STEP_MS = 820
 
 function formatNavLabel(day: DayRecord | undefined, direction: 'prev' | 'next') {
   if (!day) {
@@ -137,6 +139,9 @@ export default function PatientShell() {
   const previousDay = loadedDays[safeSelectedIndex - 1]
   const nextDay = loadedDays[safeSelectedIndex + 1]
   const visibleDays = loadedDays
+  const stripTransitionDurationMs = isGuidedReturning
+    ? GUIDED_RETURN_TRANSITION_MS
+    : MANUAL_TRANSITION_MS
 
   const frameCount = visibleDays.length
   const frameWidthPercent = 100 / frameCount
@@ -225,12 +230,11 @@ export default function PatientShell() {
               }}
             >
               <div
-                className={`absolute inset-0 flex ${
-                  isDragging ? '' : 'transition-transform duration-700 ease-out'
-                }`}
+                className={`absolute inset-0 flex ${isDragging ? '' : 'transition-transform ease-out'}`}
                 style={{
                   width: `${frameCount * 100}%`,
                   transform: `translateX(${translatePercent + dragTranslatePercent}%)`,
+                  transitionDuration: isDragging ? undefined : `${stripTransitionDurationMs}ms`,
                 }}
               >
                 {visibleDays.map((day) => {
@@ -282,8 +286,15 @@ export default function PatientShell() {
 
           <button
             onClick={goToday}
-            className="rounded-full bg-white/10 px-9 py-3 text-[1rem] tracking-[0.14em] text-white/90 backdrop-blur-md transition-transform duration-700 ease-out hover:bg-white/15"
-            style={{ transform: `translateX(${todayButtonOffset}px)` }}
+            className={`rounded-full px-9 py-3 text-[1rem] tracking-[0.14em] text-white/90 backdrop-blur-md transition-all ease-out hover:bg-white/15 ${
+              isGuidedReturning
+                ? 'bg-white/16 shadow-[0_0_0_1px_rgba(255,255,255,0.08),0_0_22px_rgba(255,255,255,0.08)]'
+                : 'bg-white/10'
+            }`}
+            style={{
+              transform: `translateX(${todayButtonOffset}px) scale(${isGuidedReturning ? 1.03 : 1})`,
+              transitionDuration: `${stripTransitionDurationMs}ms`,
+            }}
           >
             TODAY
           </button>
