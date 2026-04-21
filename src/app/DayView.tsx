@@ -128,15 +128,15 @@ export default function DayView({ day }: { day: DayRecord }) {
               </div>
             </div>
 
-            <div className="mr-1 rounded-[2rem] border border-white/10 bg-white/5 px-11 py-10">
-              <div className="grid min-h-[332px] grid-cols-[minmax(300px,1fr)_minmax(230px,0.72fr)] gap-x-12 gap-y-7">
+            <div className="mr-1 rounded-[2rem] border border-white/10 bg-white/5 px-11 py-11">
+              <div className="grid min-h-[354px] grid-cols-[minmax(320px,1fr)_minmax(230px,0.72fr)] gap-x-12 gap-y-7">
                 <div className="text-[1rem] uppercase tracking-[0.14em] text-white/45">Meds</div>
                 <div className="text-[1rem] uppercase tracking-[0.14em] text-white/45">Meals</div>
 
-                <div className="flex min-h-[212px] max-w-[460px] flex-col justify-between rounded-[1.45rem] border border-white/10 bg-white/6 px-6 py-6 shadow-inner">
+                <div className="flex min-h-[196px] max-w-[420px] flex-col justify-between rounded-[1.4rem] border border-white/10 bg-white/6 px-6 py-6 shadow-inner">
                   <div className="flex gap-4">
                     <div
-                      className={`flex h-[86px] w-[112px] items-center justify-center rounded-[1.35rem] border border-white/10 text-[1.9rem] ${
+                      className={`flex h-[80px] w-[104px] items-center justify-center rounded-[1.25rem] border border-white/10 text-[1.75rem] ${
                         day.meds.amDone
                           ? 'bg-sky-200/20 text-white/90'
                           : 'bg-white/5 text-white/75'
@@ -146,7 +146,7 @@ export default function DayView({ day }: { day: DayRecord }) {
                     </div>
 
                     <div
-                      className={`flex h-[86px] w-[112px] items-center justify-center rounded-[1.35rem] border border-white/10 text-[1.9rem] ${
+                      className={`flex h-[80px] w-[104px] items-center justify-center rounded-[1.25rem] border border-white/10 text-[1.75rem] ${
                         day.meds.pmDone
                           ? 'bg-emerald-300/20 text-white/90'
                           : 'bg-white/5 text-white/75'
@@ -165,8 +165,8 @@ export default function DayView({ day }: { day: DayRecord }) {
                   </div>
                 </div>
 
-                <div className="flex min-h-[212px] flex-col pt-1">
-                  <div className="space-y-4">
+                <div className="flex min-h-[220px] flex-col pt-2">
+                  <div className="space-y-5">
                     <MealRow done={day.meals.breakfast} label="Breakfast" />
                     <MealRow done={day.meals.lunch} label="Lunch" />
                     <MealRow done={day.meals.dinner} label="Dinner" />

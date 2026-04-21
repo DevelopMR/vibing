@@ -9,6 +9,7 @@ import {
 
 const AUTO_RETURN_MS = 5000
 const DRAG_COMMIT_THRESHOLD = 70
+const GUIDED_RETURN_STEP_MS = 650
 
 function formatNavLabel(day: DayRecord | undefined, direction: 'prev' | 'next') {
   if (!day) {
@@ -23,7 +24,9 @@ export default function PatientShell() {
   const [showOvernight, setShowOvernight] = useState(false)
   const [dragOffsetPx, setDragOffsetPx] = useState(0)
   const [isDragging, setIsDragging] = useState(false)
-  const timeoutRef = useRef<number | null>(null)
+  const [isGuidedReturning, setIsGuidedReturning] = useState(false)
+  const inactivityTimeoutRef = useRef<number | null>(null)
+  const guidedReturnTimeoutRef = useRef<number | null>(null)
   const dragPointerIdRef = useRef<number | null>(null)
   const dragStartXRef = useRef(0)
   const dragDeltaRef = useRef(0)
@@ -50,40 +53,84 @@ export default function PatientShell() {
     return dayOffset < 0 ? baseOffset : -baseOffset
   }, [dayOffset])
 
-  const clearReturnTimer = () => {
-    if (timeoutRef.current !== null) {
-      window.clearTimeout(timeoutRef.current)
-      timeoutRef.current = null
+  const clearInactivityTimer = () => {
+    if (inactivityTimeoutRef.current !== null) {
+      window.clearTimeout(inactivityTimeoutRef.current)
+      inactivityTimeoutRef.current = null
     }
   }
 
+  const clearGuidedReturnTimer = () => {
+    if (guidedReturnTimeoutRef.current !== null) {
+      window.clearTimeout(guidedReturnTimeoutRef.current)
+      guidedReturnTimeoutRef.current = null
+    }
+  }
+
+  const stopGuidedReturn = () => {
+    clearGuidedReturnTimer()
+    setIsGuidedReturning(false)
+  }
+
+  const cancelReturnBehavior = () => {
+    clearInactivityTimer()
+    stopGuidedReturn()
+  }
+
   const scheduleReturnToToday = () => {
-    clearReturnTimer()
+    clearInactivityTimer()
 
     if (selectedDate === todayDate) return
 
-    timeoutRef.current = window.setTimeout(() => {
-      setSelectedDate(todayDate)
+    inactivityTimeoutRef.current = window.setTimeout(() => {
+      setIsGuidedReturning(true)
     }, AUTO_RETURN_MS)
   }
 
   useEffect(() => {
+    if (selectedDate === todayDate) {
+      cancelReturnBehavior()
+      return
+    }
+
+    if (isGuidedReturning) {
+      clearInactivityTimer()
+      clearGuidedReturnTimer()
+
+      guidedReturnTimeoutRef.current = window.setTimeout(() => {
+        setSelectedDate((currentDate) => {
+          const currentIndex = loadedDays.findIndex((day) => day.id === currentDate)
+
+          if (currentIndex === -1 || currentIndex === todayIndex) {
+            return todayDate
+          }
+
+          const nextIndex = currentIndex > todayIndex ? currentIndex - 1 : currentIndex + 1
+          return loadedDays[nextIndex]?.id ?? todayDate
+        })
+      }, GUIDED_RETURN_STEP_MS)
+
+      return clearGuidedReturnTimer
+    }
+
     scheduleReturnToToday()
-    return clearReturnTimer
-  }, [selectedDate, todayDate])
+    return clearInactivityTimer
+  }, [isGuidedReturning, loadedDays, selectedDate, todayDate, todayIndex])
 
   const goPrev = () => {
     if (!canGoPrev) return
+    cancelReturnBehavior()
     setSelectedDate(loadedDays[safeSelectedIndex - 1].id)
   }
 
   const goNext = () => {
     if (!canGoNext) return
+    cancelReturnBehavior()
     setSelectedDate(loadedDays[safeSelectedIndex + 1].id)
   }
 
   const goToday = () => {
-    clearReturnTimer()
+    cancelReturnBehavior()
     setSelectedDate(todayDate)
   }
 
@@ -145,7 +192,7 @@ export default function PatientShell() {
                 if (event.pointerType === 'mouse' && event.button !== 0) return
                 if ((event.target as HTMLElement).closest('button')) return
 
-                clearReturnTimer()
+                cancelReturnBehavior()
                 dragPointerIdRef.current = event.pointerId
                 dragStartXRef.current = event.clientX
                 dragDeltaRef.current = 0
