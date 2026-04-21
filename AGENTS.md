@@ -27,6 +27,7 @@ The patient should be able to understand:
 8. Overnight mode is a distinct simplified state.
 9. Patient communication is one-way only: caregiver to patient.
 10. The interface must avoid political, religious, or news-triggering content.
+11. Overnight is a visual state that applies only to the **today** frame during the proper overnight timeframe. It is not a separate navigable frame.
 
 ## Current Tech Stack
 - React
@@ -55,6 +56,7 @@ Use the established design direction from the project conversations:
 - tasks, meds, meals visible
 - message area visible
 - weather active/current
+- may render in overnight visual mode when the current time is in the overnight window
 
 ### Past Day
 - read-only
@@ -78,6 +80,8 @@ Use the established design direction from the project conversations:
 - focused on calm reassurance
 - should support early waking behavior
 - transitions into day mode at wake time
+- applies visually to the current day only
+- must not be modeled as a separate day in the navigation strip
 
 ## Motion / Interaction Guidance
 The full Motion Module is a future reusable accessibility library. For this prototype:
@@ -92,6 +96,15 @@ The full Motion Module is a future reusable accessibility library. For this prot
   - jitter rejection
   - multi-touch safe-area drag inference
   - fading touch traces for rejected touches
+
+## Navigation Model
+Navigation should be understood as a rolling continuous strip of calendar days rather than a fixed three-frame system.
+
+- the patient may move left and right across an ongoing sequence of days
+- the currently visible buttons should update to reflect the actual adjacent dates, not permanent `Yesterday` / `Tomorrow` labels tied to three mock frames
+- past-day data and future weather should be preloaded to keep navigation feeling smooth and weighted
+- `today` is a date identity and behavioral anchor, not simply "the middle card" in a static array
+- valid resting positions are full-day landings only; the strip should never settle between dates
 
 ## Wallpaper Guidance
 Most wallpapers will be chosen automatically.
@@ -126,9 +139,10 @@ Prototype direction:
 1. Fix day-strip navigation and landing behavior.
 2. Add finger drag / pointer drag navigation.
 3. Keep today rollback working correctly.
-4. Refine layout closer to design mockups.
-5. Keep architecture async-ready for future API integration.
-6. Preserve calmness and glanceability.
+4. Rebuild the shell around a rolling day-strip model rather than a hard-coded three-frame demo.
+5. Refine layout closer to design mockups.
+6. Keep architecture async-ready for future API integration.
+7. Preserve calmness and glanceability.
 
 ## Working Style Expectations for Future Agents
 - Do not redesign the product casually.
@@ -137,3 +151,4 @@ Prototype direction:
 - Respect dementia-focused usability over flashy UI.
 - Make the prototype visually serious and close to the approved mock direction.
 - Prefer small, working improvements over large speculative rewrites.
+- Treat the navigation foundation as a targeted refactor inside the current repo, not a full product restart.
