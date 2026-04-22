@@ -27,13 +27,16 @@ The current implementation centers around:
 
 ### What exists now
 `PatientShell.tsx` currently owns:
-- active day index
+- active day identity
 - overnight test toggle
 - TODAY button offset logic
-- auto-return timer
-- day strip rendering for a temporary past/current/future demo slice
-- overnight test rendering, which should be reworked into a visual state on today rather than a separate frame
-- button-based navigation for yesterday / today / tomorrow
+- inactivity timer
+- guided return timer
+- rolling day strip rendering across an expanded local range
+- pointer / finger drag navigation
+- button-based navigation for neighboring real dates
+- guided animated rollback to today
+- interruption of rollback on new interaction
 
 `DayView.tsx` currently renders:
 - calendar icon
@@ -60,11 +63,10 @@ There are four conceptual states:
 
 ### Current implementation
 The current code treats:
-- past/current/future as a sliding strip
-- overnight as a separate rendered view
+- past/current/future as a rolling sliding strip
+- overnight as a visual substitution applied only to today
 
-The sliding strip is the right direction.
-The separate overnight frame is not.
+This is now aligned with the corrected product model.
 
 ### Corrected architectural rule
 - each navigable frame represents a calendar day
@@ -83,7 +85,8 @@ Keep these separate.
 Should include:
 - selected date/frame identity
 - overnight state for today
-- rollback timer
+- inactivity timer
+- guided return timer / active rollback state
 - content-open state
 - drag state
 - settling state
@@ -120,10 +123,11 @@ Responsibilities:
 - root patient UI container
 - frame strip layout
 - transitions between day frames in a rolling continuous sequence
-- today rollback timer
+- inactivity-to-rollback behavior
+- guided day-by-day rollback to today
 - overnight application to the current day
 - date-aware navigation button behavior
-- eventually gesture handling
+- pointer / finger gesture handling
 
 ### `DayFrame`
 Responsibilities:
@@ -152,7 +156,7 @@ The biggest current architectural hotspot is the day-strip translation math.
 - one viewport-width frame at a time
 - stable snap/landing positions
 - rollback to today after inactivity
-- later: drag navigation
+- direct drag navigation
 - overnight should not change the strip identity or break the strip math
 - adjacent navigation labels should reflect the real neighboring dates
 - the system should be able to preload past and future days beyond the initial visible set
@@ -168,6 +172,14 @@ Use a fixed viewport strip model:
 
 The current project encountered bugs here already, so keep this area simple and explicit.
 
+### Current confirmed behavior
+- button navigation works across the expanded local date range
+- swipe / drag navigation works without needing the side arrows
+- guided rollback advances one day at a time toward today
+- rollback pauses / cancels when the user interacts
+- overnight visual mode persists correctly while guided rollback returns to today
+- bottom navigation rail responds to strip movement, though later fine-tuning may still help
+
 ---
 
 ## 5. State Roadmap
@@ -177,6 +189,9 @@ The current project encountered bugs here already, so keep this area simple and 
 - current
 - future
 - overnight visual treatment for today only
+- rolling local date range around today
+- drag state
+- guided rollback state
 
 ### Planned additions
 - content-open hold state
@@ -225,6 +240,9 @@ The visual direction is intentionally not generic Tailwind-dashboard styling.
 ### Known weak area
 The lower-left meds/meals zone has been repeatedly identified as a clarity hotspot and should be treated carefully.
 
+### Current visual handoff note
+Recent work improved shell spacing and detached the bottom nav rail structurally from the main rounded panel. The biggest remaining layout issue is still the lower-left meds/meals section, where the inner meds card and outer container proportions need more refinement.
+
 ---
 
 ## 8. Prototype Build Priorities
@@ -239,6 +257,10 @@ In order:
 7. Add local wallpapers.
 8. Add content-open behavior for attachments/messages.
 9. Add calendar overlay shell and caregiver unlock stub.
+
+Status update:
+- items 1 through 5 are now implemented in the prototype
+- item 6 is the current active refinement area
 
 ### Phase 1 success criteria
 The navigation foundation phase is successful when:
@@ -261,6 +283,10 @@ The guided return-to-today phase should:
 - keep the bottom navigation labels and controls synchronized while the strip is returning
 - preserve a clear sense of place in the calendar during rollback
 - define how rollback pauses, resumes, or cancels when the user interacts
+
+Current status:
+- implemented and confirmed working in local prototype review
+- future polish can still refine timing and visual emphasis
 
 ---
 

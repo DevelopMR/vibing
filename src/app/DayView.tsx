@@ -91,8 +91,8 @@ export default function DayView({ day }: { day: DayRecord }) {
           </div>
         </div>
       ) : (
-        <div className="grid h-full grid-cols-[minmax(0,1.22fr)_minmax(360px,0.82fr)] grid-rows-[auto_minmax(0,1fr)] gap-x-12 gap-y-8">
-          <div className="row-span-2 flex flex-col gap-10">
+        <div className="flex h-full gap-12">
+          <div className="flex min-w-0 flex-1 flex-col gap-10">
             <div className="pt-1">
               <div className="text-[5.2rem] leading-none font-semibold tracking-tight">
                 {day.timeLabel}
@@ -129,74 +129,81 @@ export default function DayView({ day }: { day: DayRecord }) {
             </div>
 
             <div className="mr-1 rounded-[2rem] border border-white/10 bg-white/5 px-11 py-11">
-              <div className="grid min-h-[354px] grid-cols-[minmax(320px,1fr)_minmax(230px,0.72fr)] gap-x-12 gap-y-7">
-                <div className="text-[1rem] uppercase tracking-[0.14em] text-white/45">Meds</div>
-                <div className="text-[1rem] uppercase tracking-[0.14em] text-white/45">Meals</div>
+              <div className="flex items-start justify-between gap-12">
+                <div className="flex min-w-0 flex-[1.05] flex-col">
+                  <div className="text-[1rem] uppercase tracking-[0.14em] text-white/45">Meds</div>
 
-                <div className="flex min-h-[196px] max-w-[420px] flex-col justify-between rounded-[1.4rem] border border-white/10 bg-white/6 px-6 py-6 shadow-inner">
-                  <div className="flex gap-4">
-                    <div
-                      className={`flex h-[80px] w-[104px] items-center justify-center rounded-[1.25rem] border border-white/10 text-[1.75rem] ${
-                        day.meds.amDone
-                          ? 'bg-sky-200/20 text-white/90'
-                          : 'bg-white/5 text-white/75'
-                      }`}
-                    >
-                      AM
+                  <div className="mt-7 max-w-[420px] rounded-[1.4rem] border border-white/10 bg-white/6 px-6 py-6 shadow-inner">
+                    <div className="flex flex-col justify-between gap-7">
+                      <div className="flex gap-4">
+                        <div
+                          className={`flex h-[80px] w-[104px] items-center justify-center rounded-[1.25rem] border border-white/10 text-[1.75rem] ${
+                            day.meds.amDone
+                              ? 'bg-sky-200/20 text-white/90'
+                              : 'bg-white/5 text-white/75'
+                          }`}
+                        >
+                          AM
+                        </div>
+
+                        <div
+                          className={`flex h-[80px] w-[104px] items-center justify-center rounded-[1.25rem] border border-white/10 text-[1.75rem] ${
+                            day.meds.pmDone
+                              ? 'bg-emerald-300/20 text-white/90'
+                              : 'bg-white/5 text-white/75'
+                          }`}
+                        >
+                          PM
+                        </div>
+                      </div>
+
+                      <div className="pt-3 text-[1.42rem] leading-none text-white/80">
+                        {day.meds.amDone && day.meds.pmDone
+                          ? 'Done'
+                          : day.meds.amDone
+                            ? 'Morning done'
+                            : 'Take now'}
+                      </div>
                     </div>
-
-                    <div
-                      className={`flex h-[80px] w-[104px] items-center justify-center rounded-[1.25rem] border border-white/10 text-[1.75rem] ${
-                        day.meds.pmDone
-                          ? 'bg-emerald-300/20 text-white/90'
-                          : 'bg-white/5 text-white/75'
-                      }`}
-                    >
-                      PM
-                    </div>
-                  </div>
-
-                  <div className="pt-3 text-[1.42rem] leading-none text-white/80">
-                    {day.meds.amDone && day.meds.pmDone
-                      ? 'Done'
-                      : day.meds.amDone
-                        ? 'Morning done'
-                        : 'Take now'}
                   </div>
                 </div>
 
-                <div className="flex min-h-[220px] flex-col pt-2">
-                  <div className="space-y-5">
-                    <MealRow done={day.meals.breakfast} label="Breakfast" />
-                    <MealRow done={day.meals.lunch} label="Lunch" />
-                    <MealRow done={day.meals.dinner} label="Dinner" />
-                  </div>
+                <div className="flex min-w-[230px] flex-[0.72] flex-col">
+                  <div className="text-[1rem] uppercase tracking-[0.14em] text-white/45">Meals</div>
 
-                  <div className="mt-auto pt-8 text-[1.15rem] text-white/65">
-                    Calories: {day.meals.calories}
+                  <div className="mt-7 flex min-h-[220px] flex-col pt-1">
+                    <div className="space-y-5">
+                      <MealRow done={day.meals.breakfast} label="Breakfast" />
+                      <MealRow done={day.meals.lunch} label="Lunch" />
+                      <MealRow done={day.meals.dinner} label="Dinner" />
+                    </div>
+
+                    <div className="mt-auto pt-8 text-[1.15rem] text-white/65">
+                      Calories: {day.meals.calories}
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="self-start rounded-[1.95rem] border border-white/10 bg-white/5 px-9 py-8">
-            <div className="min-h-[252px]">
-              <div className="text-[1rem] uppercase tracking-[0.14em] text-white/45">
-                {day.nextLabel}
-              </div>
-              <div className="mt-4 text-[2.2rem] font-medium text-white/95">{day.nextTask}</div>
+          <div className="flex w-[40%] min-w-[360px] flex-col justify-between gap-8">
+            <div className="rounded-[1.95rem] border border-white/10 bg-white/5 px-9 py-8">
+              <div className="min-h-[252px]">
+                <div className="text-[1rem] uppercase tracking-[0.14em] text-white/45">
+                  {day.nextLabel}
+                </div>
+                <div className="mt-4 text-[2.2rem] font-medium text-white/95">{day.nextTask}</div>
 
-              <div className="mt-8 space-y-4">
-                {day.tasks.map((task) => (
-                  <TaskRow key={task.id} completed={task.completed} label={task.label} />
-                ))}
+                <div className="mt-8 space-y-4">
+                  {day.tasks.map((task) => (
+                    <TaskRow key={task.id} completed={task.completed} label={task.label} />
+                  ))}
+                </div>
               </div>
             </div>
-          </div>
 
-          <div className="self-end">
-            <div className="w-full rounded-[1.95rem] border border-white/10 bg-white/5 px-9 py-8">
+            <div className="rounded-[1.95rem] border border-white/10 bg-white/5 px-9 py-8">
               <div className="flex items-start gap-4">
                 <span className="text-3xl text-white/55">💬</span>
                 <div className="text-[1.65rem] leading-relaxed text-white/90">

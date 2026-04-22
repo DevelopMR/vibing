@@ -33,7 +33,7 @@ The repo is initialized and uses:
 
 The current working files include:
 - `package.json` with the active stack
-- `src/app/PatientShell.tsx` with timer + navigation shell
+- `src/app/PatientShell.tsx` with rolling strip + drag + guided return shell
 - `src/app/DayView.tsx` with the current presentational content renderer
 - `src/data/mockDays.ts` for local day-state data
 
@@ -56,13 +56,13 @@ Done.
 - Overnight visual mode on the current day
 
 ### 4. Day-based navigation shell
-Partially done.
+Implemented as a rolling date strip.
 
 ### 5. TODAY button offset behavior
 Implemented in prototype shell.
 
 ### 6. Auto-return to today after 5 seconds
-Implemented conceptually and working in some cases, but tied to strip behavior quality.
+Implemented with guided rollback after inactivity.
 
 ### 7. Overnight dev toggle
 Implemented as a testing control.
@@ -70,42 +70,35 @@ Implemented as a testing control.
 ### 8. Calendar icon restored in the UI
 Implemented in `DayView.tsx`.
 
+### 9. Expanded mock day range
+Implemented with a local rolling window around today.
+
+### 10. Pointer / finger drag navigation
+Implemented and confirmed working.
+
+### 11. Guided return-to-today animation
+Implemented and confirmed stepping day by day with interruption support.
+
 ---
 
 ## Current Known Problems
 
-## 1. Day-strip sizing / landing issues
-This is the biggest current prototype problem.
-
-Symptoms seen during testing:
-- frames appearing wider than intended
-- bad landing positions
-- blank/in-between location during rollback
-- mismatch between strip width and translate math
-
-This has already been identified as a frame-strip math problem, not a conceptual design issue.
-
-## 2. The shell still behaves like a fixed three-frame demo
-Current navigation assumptions are too tied to a temporary `yesterday / today / tomorrow` slice.
-
-The intended product behavior is a rolling continuous sequence of dates with preloaded past and future data around the active window.
-
-## 3. Overnight is still represented too much like a separate screen
-The product model has now been clarified:
-- overnight is a visual state on today only
-- overnight should not exist as its own navigable frame
-
-## 4. No drag navigation yet
-Current navigation is button-driven only.
-
-## 5. Visual polish still incomplete
+## 1. Visual polish still incomplete
 The prototype currently has structure and some styling, but it is not yet close enough to the approved mockups.
 
-## 6. No wallpaper/background asset system yet
+Current rough areas seen in the latest review:
+- lower-left meds/meals alignment still needs tuning
+- inner vs outer sizing in the meds area is not fully resolved
+- bottom navigation motion is acceptable but may still need later fine-tuning
+
+## 2. No wallpaper/background asset system yet
 Still using gradients and frame shells rather than per-day backgrounds.
 
-## 7. No real content-open state yet
+## 3. No real content-open state yet
 Past-day attachments are indicated visually, but the open-image behavior is not fully implemented.
+
+## 4. No calendar overlay / caregiver unlock shell yet
+The calendar icon is present, but the overlay flow is still a placeholder.
 
 ---
 
@@ -121,6 +114,7 @@ Past-day attachments are indicated visually, but the open-image behavior is not 
 - Leftward navigation = into the future.
 - The display should eventually return to today after inactivity.
 - Navigation is modeled as a rolling sequence of dates, not a permanent three-frame structure.
+- Guided rollback should pause immediately when the user interacts.
 
 ### Overnight
 - Should be the likely first experience for early wakeups.
@@ -160,36 +154,28 @@ Recommended branch pattern going forward:
 
 ## Highest Priority Next Tasks
 
-### 1. Rebuild the navigation foundation around a rolling day strip
-This is the immediate blocker and the current Phase 1 focus.
-
-### 2. Fix day-strip width and translate math
-This sits inside the navigation-foundation work.
-
-### 3. Expand local test data to about two weeks on either side of today
-This should happen once the rolling navigation model is stable enough to validate the feel across a realistic date range.
-
-### 4. Add drag/pointer navigation
-After landing positions are correct and the wider rolling range is in place.
-
-### 5. Replace snapback with guided rollback to today
-The return should move through intervening days with calm motion and synchronized bottom-nav feedback rather than jolting directly home.
-
-### 6. Improve shell polish toward approved mock
+### 1. Improve shell polish toward approved mock
 Focus on:
 - typography
 - panel softness
 - meds/meals clarity
 - bedtime simplification
+- lower-left spacing cleanup
 
-### 7. Add local wallpaper system
+### 2. Add local wallpaper system
 Start with a local curated set.
 
-### 8. Add content-open behavior
+### 3. Add content-open behavior
 Needed especially for past-day images.
 
-### 9. Add calendar overlay shell
+### 4. Add calendar overlay shell
 With a caregiver unlock stub.
+
+### 5. Tune guided return motion
+The step-by-step rollback is working, but the motion rhythm and nav-rail feel may still want refinement later.
+
+### 6. Begin planning async-ready wallpaper / weather boundaries
+No live API work yet, but future interfaces should stay easy to swap in.
 
 ---
 
@@ -225,18 +211,27 @@ The prototype phase is successful when:
 - stable frame landing
 - overnight remains a visual state on today only
 - simple, reliable return-to-today behavior is acceptable as a temporary implementation
+Status: functionally complete.
 
 ### Phase 2: Range Expansion And Drag
 - expand local mock data to roughly 14 days before and after today
 - validate weighted rolling feel across a realistic date span
 - add pointer/drag navigation
+Status: implemented and confirmed working.
 
 ### Phase 3: Guided Return-To-Today
 - replace snapback with animated rollback through intervening days
 - use pleasant motion curves to preserve orientation
 - keep bottom navigation controls synchronized during rollback
+Status: implemented and confirmed working, with room for later motion polish.
+
+### Phase 4: Visual Refinement And Local Atmosphere
+- clean up lower-left meds/meals pacing and hierarchy
+- continue aligning shell spacing to the approved mock direction
+- add local wallpaper/background support
+- preserve the working navigation foundation while improving feel
 
 ---
 
 ## Summary
-This project is in a promising early prototype stage. The concept, rules, and design direction are well established. The main technical risk right now is not the overall architecture but the frame-navigation implementation and the gap between current prototype styling and the approved visual concepts.
+This project is in a promising early prototype stage. The navigation foundation is now materially stronger than before: rolling dates, drag navigation, guided rollback, interruption behavior, and overnight persistence are all working. The main near-term risk has shifted away from navigation math and toward visual refinement, especially the lower-left meds/meals composition and the absence of local wallpaper atmosphere.
