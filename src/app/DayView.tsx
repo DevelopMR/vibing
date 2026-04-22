@@ -171,7 +171,7 @@ export default function DayView({ day }: { day: DayRecord }) {
                 <div className="flex min-w-[230px] flex-[0.72] flex-col">
                   <div className="text-[1rem] uppercase tracking-[0.14em] text-white/45">Meals</div>
 
-                  <div className="mt-7 flex min-h-[220px] flex-col pt-1">
+                  <div className="mt-7 flex flex-col pt-1">
                     <div className="space-y-5">
                       <MealRow done={day.meals.breakfast} label="Breakfast" />
                       <MealRow done={day.meals.lunch} label="Lunch" />
