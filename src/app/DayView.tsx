@@ -2,34 +2,26 @@ import { type DayRecord } from '../data/mockDays'
 
 function TaskRow({ completed, label }: { completed: boolean; label: string }) {
   return (
-    <div className="flex items-center gap-3 text-[1.15rem]">
-      <span
-        className={`inline-flex h-6 w-6 items-center justify-center rounded-full border ${
-          completed
-            ? 'border-emerald-300 bg-emerald-300/20 text-emerald-200'
-            : 'border-white/30 text-transparent'
-        }`}
-      >
+    <div className="day-list-row day-task-row">
+      <span className={`day-list-bullet ${completed ? 'is-complete' : 'is-pending'}`}>
         •
       </span>
-      <span className={completed ? 'text-white/80' : 'text-white/95'}>{label}</span>
+      <span className={completed ? 'day-task-label is-complete' : 'day-task-label is-pending'}>
+        {label}
+      </span>
     </div>
   )
 }
 
 function MealRow({ done, label }: { done: boolean; label: string }) {
   return (
-    <div className="flex items-center gap-3 text-[1.1rem]">
-      <span
-        className={`inline-flex h-6 w-6 items-center justify-center rounded-full border ${
-          done
-            ? 'border-emerald-300 bg-emerald-300/20 text-emerald-200'
-            : 'border-white/25 text-transparent'
-        }`}
-      >
+    <div className="day-list-row day-meal-row">
+      <span className={`day-list-bullet ${done ? 'is-complete' : 'is-pending'}`}>
         •
       </span>
-      <span className={done ? 'text-white/90' : 'text-white/80'}>{label}</span>
+      <span className={done ? 'day-meal-label is-complete' : 'day-meal-label is-pending'}>
+        {label}
+      </span>
     </div>
   )
 }
@@ -41,47 +33,40 @@ export default function DayView({ day }: { day: DayRecord }) {
   const weatherIcon = isPast ? '🌤️' : isFuture ? '⛅' : '☀️'
 
   return (
-    <div className="relative h-full w-full px-16 pb-16 pt-14">
-      <button
-        className="absolute left-8 top-8 inline-flex h-11 w-11 items-center justify-center rounded-xl border border-white/10 bg-white/10 text-white/90 backdrop-blur-md"
-        aria-label="Open calendar"
-      >
-        <span className="text-xl">🗓️</span>
+    <div className="day-view">
+      <button className="day-view__calendar" aria-label="Open calendar">
+        <span className="day-view__calendar-icon">🗓️</span>
       </button>
 
       {isOvernight ? (
-        <div className="flex h-full flex-col justify-between gap-12">
-          <div className="flex items-start justify-between">
-            <div>
-              <div className="text-[4.5rem] leading-none font-semibold tracking-tight">
-                {day.timeLabel}
-              </div>
-              <div className="mt-2 text-[1.95rem] text-white/75">{day.dateLabel}</div>
+        <div className="day-view__overnight">
+          <div className="day-view__overnight-top">
+            <div className="day-view__overnight-headline">
+              <div className="day-view__overnight-time">{day.timeLabel}</div>
+              <div className="day-view__overnight-date">{day.dateLabel}</div>
             </div>
 
-            <div className="w-[280px] rounded-3xl border border-white/10 bg-white/5 p-6">
-              <div className="text-sm uppercase tracking-[0.16em] text-white/45">
-                Tomorrow
-              </div>
-              <div className="mt-4 space-y-4 text-[1.25rem] text-white/90">
+            <div className="day-card day-card--overnight-next">
+              <div className="day-card__eyebrow">Tomorrow</div>
+              <div className="day-card__stack">
                 <div>Clean Shoes</div>
                 <div>Buy Milk</div>
               </div>
             </div>
           </div>
 
-          <div className="flex items-center gap-4 text-[1.8rem] text-white/80">
-            <span className="text-5xl">🌙</span>
+          <div className="day-view__overnight-weather">
+            <span className="day-view__overnight-weather-icon">🌙</span>
             <div>
-              <div className="text-[2rem] text-white/90">{day.weather.temp}</div>
-              <div className="text-white/60">{day.weather.condition}</div>
+              <div className="day-view__overnight-temp">{day.weather.temp}</div>
+              <div className="day-view__overnight-condition">{day.weather.condition}</div>
             </div>
           </div>
 
-          <div className="flex justify-end">
-            <div className="w-[430px] rounded-[2rem] border border-white/10 bg-white/8 px-8 py-8 text-right">
-              <div className="text-[2.2rem] text-white/92">Good night, Dad.</div>
-              <div className="mt-5 text-[1.55rem] leading-relaxed text-white/80">
+          <div className="day-view__overnight-message-wrap">
+            <div className="day-card day-card--overnight-message">
+              <div className="day-view__overnight-message-title">Good night, Dad.</div>
+              <div className="day-view__overnight-message-body">
                 You did great today.
                 <br />
                 Sleep well.
@@ -91,94 +76,82 @@ export default function DayView({ day }: { day: DayRecord }) {
           </div>
         </div>
       ) : (
-        <div className="flex h-full gap-12">
-          <div className="flex min-w-0 flex-1 flex-col gap-10">
-            <div className="pt-1">
-              <div className="text-[5.2rem] leading-none font-semibold tracking-tight">
-                {day.timeLabel}
-              </div>
-              <div className="mt-3 text-[2rem] text-white/75">{day.dateLabel}</div>
+        <div className="day-view__body">
+          <div className="day-view__primary">
+            <div className="day-view__header">
+              <div className="day-view__time">{day.timeLabel}</div>
+              <div className="day-view__date">{day.dateLabel}</div>
 
-              <div className="mt-10 flex items-start gap-11">
-                <div className="min-w-[188px]">
-                  <div className="flex items-center gap-4">
-                    <span className="text-5xl">{weatherIcon}</span>
-                    <span className="text-[2.35rem] text-white/92">{day.weather.temp}</span>
+              <div className="day-view__weather-row">
+                <div className="day-view__weather-summary">
+                  <div className="day-view__weather-summary-main">
+                    <span className="day-view__weather-icon">{weatherIcon}</span>
+                    <span className="day-view__weather-temp">{day.weather.temp}</span>
                   </div>
-                  <div className="mt-2 text-[1.1rem] text-white/58">{day.weather.condition}</div>
+                  <div className="day-view__weather-condition">{day.weather.condition}</div>
                 </div>
 
-                <div className="flex min-w-0 flex-col gap-4">
+                <div className="day-view__weather-detail">
                   {day.weather.hourly.length > 0 && (
-                    <div className="flex items-end gap-6 text-white/80">
+                    <div className="day-view__hourly-list">
                       {day.weather.hourly.map((hour) => (
-                        <div key={hour.time} className="min-w-[54px] text-center">
-                          <div className="text-2xl">{hour.icon}</div>
-                          <div className="mt-1 text-sm">{hour.time}</div>
-                          {hour.temp && <div className="text-sm">{hour.temp}</div>}
+                        <div key={hour.time} className="day-view__hourly-item">
+                          <div className="day-view__hourly-icon">{hour.icon}</div>
+                          <div className="day-view__hourly-time">{hour.time}</div>
+                          {hour.temp && <div className="day-view__hourly-temp">{hour.temp}</div>}
                         </div>
                       ))}
                     </div>
                   )}
 
                   {day.weather.warning && (
-                    <div className="text-[1.15rem] text-amber-300">⚠ {day.weather.warning}</div>
+                    <div className="day-view__weather-warning">⚠ {day.weather.warning}</div>
                   )}
                 </div>
               </div>
             </div>
 
-            <div className="mr-1 rounded-[2rem] border border-white/10 bg-white/5 px-11 py-11">
-              <div className="flex items-start justify-between gap-12">
-                <div className="flex min-w-0 flex-[1.05] flex-col">
-                  <div className="text-[1rem] uppercase tracking-[0.14em] text-white/45">Meds</div>
+            <div id="day-meds-meals" className="day-card day-card--meds-meals">
+              <div className="day-view__meds-meals">
+                <div className="day-view__meds-column">
+                  <div className="day-section-title">Meds</div>
 
-                  <div className="mt-7 max-w-[420px] rounded-[1.4rem] border border-white/10 bg-white/6 px-6 py-6 shadow-inner">
-                    <div className="flex flex-col justify-between gap-7">
-                      <div className="flex gap-4">
-                        <div
-                          className={`flex h-[80px] w-[104px] items-center justify-center rounded-[1.25rem] border border-white/10 text-[1.75rem] ${
-                            day.meds.amDone
-                              ? 'bg-sky-200/20 text-white/90'
-                              : 'bg-white/5 text-white/75'
-                          }`}
-                        >
-                          AM
-                        </div>
-
-                        <div
-                          className={`flex h-[80px] w-[104px] items-center justify-center rounded-[1.25rem] border border-white/10 text-[1.75rem] ${
-                            day.meds.pmDone
-                              ? 'bg-emerald-300/20 text-white/90'
-                              : 'bg-white/5 text-white/75'
-                          }`}
-                        >
-                          PM
-                        </div>
+                  <div id="day-meds-card" className="day-card day-card--meds-inner">
+                    <div className="day-view__med-toggle-row">
+                      <div
+                        className={`day-view__med-toggle ${day.meds.amDone ? 'is-am-done' : 'is-pending'}`}
+                      >
+                        AM
                       </div>
 
-                      <div className="pt-3 text-[1.42rem] leading-none text-white/80">
-                        {day.meds.amDone && day.meds.pmDone
-                          ? 'Done'
-                          : day.meds.amDone
-                            ? 'Morning done'
-                            : 'Take now'}
+                      <div
+                        className={`day-view__med-toggle ${day.meds.pmDone ? 'is-pm-done' : 'is-pending'}`}
+                      >
+                        PM
                       </div>
+                    </div>
+
+                    <div className="day-view__med-status">
+                      {day.meds.amDone && day.meds.pmDone
+                        ? 'Done'
+                        : day.meds.amDone
+                          ? 'Morning done'
+                          : 'Take now'}
                     </div>
                   </div>
                 </div>
 
-                <div className="flex min-w-[230px] flex-[0.72] flex-col">
-                  <div className="text-[1rem] uppercase tracking-[0.14em] text-white/45">Meals</div>
+                <div className="day-view__meals-column">
+                  <div className="day-section-title">Meals</div>
 
-                  <div className="mt-7 flex flex-col pt-1">
-                    <div className="space-y-5">
+                  <div className="day-view__meals-content">
+                    <div className="day-view__meal-list">
                       <MealRow done={day.meals.breakfast} label="Breakfast" />
                       <MealRow done={day.meals.lunch} label="Lunch" />
                       <MealRow done={day.meals.dinner} label="Dinner" />
                     </div>
 
-                    <div className="mt-auto pt-8 text-[1.15rem] text-white/65">
+                    <div className="day-view__calories">
                       Calories: {day.meals.calories}
                     </div>
                   </div>
@@ -187,15 +160,13 @@ export default function DayView({ day }: { day: DayRecord }) {
             </div>
           </div>
 
-          <div className="flex w-[40%] min-w-[360px] flex-col justify-between gap-8">
-            <div className="rounded-[1.95rem] border border-white/10 bg-white/5 px-9 py-8">
-              <div className="min-h-[252px]">
-                <div className="text-[1rem] uppercase tracking-[0.14em] text-white/45">
-                  {day.nextLabel}
-                </div>
-                <div className="mt-4 text-[2.2rem] font-medium text-white/95">{day.nextTask}</div>
+          <div className="day-view__secondary">
+            <div className="day-card day-card--next">
+              <div className="day-card__body day-card__body--tall">
+                <div className="day-card__eyebrow">{day.nextLabel}</div>
+                <div className="day-card__headline">{day.nextTask}</div>
 
-                <div className="mt-8 space-y-4">
+                <div className="day-card__list">
                   {day.tasks.map((task) => (
                     <TaskRow key={task.id} completed={task.completed} label={task.label} />
                   ))}
@@ -203,16 +174,16 @@ export default function DayView({ day }: { day: DayRecord }) {
               </div>
             </div>
 
-            <div className="rounded-[1.95rem] border border-white/10 bg-white/5 px-9 py-8">
-              <div className="flex items-start gap-4">
-                <span className="text-3xl text-white/55">💬</span>
-                <div className="text-[1.65rem] leading-relaxed text-white/90">
+            <div className="day-card day-card--message">
+              <div className="day-view__message-row">
+                <span className="day-view__message-icon">💬</span>
+                <div className="day-view__message-text">
                   {day.message}
                 </div>
               </div>
 
               {(isPast || isFuture) && (
-                <div className="mt-6 flex justify-end gap-3 text-2xl text-white/60">
+                <div className="day-view__message-attachments">
                   <span>🖼️</span>
                 </div>
               )}
