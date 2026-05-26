@@ -34,16 +34,17 @@ export default function DayView({ day }: { day: DayRecord }) {
 
   return (
     <div className="day-view">
-      <button className="day-view__calendar" aria-label="Open calendar">
-        <span className="day-view__calendar-icon">🗓️</span>
-      </button>
-
       {isOvernight ? (
         <div className="day-view__overnight">
           <div className="day-view__overnight-top">
             <div className="day-view__overnight-headline">
+              <div className="day-view__dateline">
+                <button className="day-view__calendar" aria-label="Open calendar">
+                  <span className="day-view__calendar-icon">🗓️</span>
+                </button>
+                <div className="day-view__overnight-date">{day.dateLabel}</div>
+              </div>
               <div className="day-view__overnight-time">{day.timeLabel}</div>
-              <div className="day-view__overnight-date">{day.dateLabel}</div>
             </div>
 
             <div className="day-card day-card--overnight-next">
@@ -79,8 +80,14 @@ export default function DayView({ day }: { day: DayRecord }) {
         <div className="day-view__body">
           <div className="day-view__primary">
             <div className="day-view__header">
+              <div className="day-view__dateline">
+                <button className="day-view__calendar" aria-label="Open calendar">
+                  <span className="day-view__calendar-icon">🗓️</span>
+                </button>
+                <div className="day-view__date">{day.dateLabel}</div>
+              </div>
+
               <div className="day-view__time">{day.timeLabel}</div>
-              <div className="day-view__date">{day.dateLabel}</div>
 
               <div className="day-view__weather-row">
                 <div className="day-view__weather-summary">
