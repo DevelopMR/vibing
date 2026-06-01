@@ -1,0 +1,11 @@
+{
+  "enableAllProjectMcpServers": true,
+  "permissions": {
+    "allow": [
+      "PowerShell(Get-ChildItem *)",
+      "PowerShell(Test-Path *)",
+      "PowerShell(cd \"c:\\Dev\\comfort-day\\vibing\" && npx tsc --noEmit 2>&1)",
+      "PowerShell(cd \"c:\\Dev\\comfort-day\\vibing\" && git status)"
+    ]
+  }
+}
