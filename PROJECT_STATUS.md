@@ -47,7 +47,7 @@ The project is entering a targeted navigation-foundation refactor inside the cur
 Done.
 
 ### 2. Local mock day data
-Done.
+Done. Day range is now dynamic — centered on actual current date.
 
 ### 3. Four conceptual states represented in product thinking
 - Past day
@@ -79,25 +79,36 @@ Implemented and confirmed working.
 ### 11. Guided return-to-today animation
 Implemented and confirmed stepping day by day with interruption support.
 
+### 12. Layout fixes — header zone and meds/meals
+Date/time/weather header zone refined. Meds/meals overlap resolved via explicit top/bottom anchoring. Inner sizing tightened.
+
+### 13. Wallpaper / background asset system
+Fully implemented. Includes:
+- Vite plugin serving `/api/wallpaper/*` routes
+- HuggingFace FLUX.1-schnell AI generation (text-to-image for day; img2img for night to match scene)
+- Sequential day→night generation: day generated first, night derived from day via img2img (FLUX, SDXL fallback)
+- Unsplash / Pexels stock fallback for dates older than 31 days
+- Fallback image pool (`public/wallpapers/fallback/`) used when all generation fails
+- JPEG compression via sharp on save (~150–350 KB vs 1–3 MB raw PNG)
+- In-memory manifest cache; images stored in `public/wallpapers/{date}/{day|night}.jpg`
+- Dev controls: Gen Wallpaper, Del Wallpaper, Gen All Wallpapers
+
 ---
 
 ## Current Known Problems
 
 ## 1. Visual polish still incomplete
-The prototype currently has structure and some styling, but it is not yet close enough to the approved mockups.
+Structure and navigation are solid. Visual refinement toward the approved mockups continues.
 
-Current rough areas seen in the latest review:
-- lower-left meds/meals alignment still needs tuning
-- inner vs outer sizing in the meds area is not fully resolved
-- bottom navigation motion is acceptable but may still need later fine-tuning
+Remaining rough areas:
+- typography weight and spacing could be tightened
+- glass panel softness and depth not fully realized
+- meds/meals hierarchy still has room for clarity improvement
 
-## 2. No wallpaper/background asset system yet
-Still using gradients and frame shells rather than per-day backgrounds.
+## 2. No real content-open state yet
+Past-day attachments are indicated visually, but the open-image behavior is not implemented.
 
-## 3. No real content-open state yet
-Past-day attachments are indicated visually, but the open-image behavior is not fully implemented.
-
-## 4. No calendar overlay / caregiver unlock shell yet
+## 3. No calendar overlay / caregiver unlock shell yet
 The calendar icon is present, but the overlay flow is still a placeholder.
 
 ---
@@ -154,28 +165,21 @@ Recommended branch pattern going forward:
 
 ## Highest Priority Next Tasks
 
-### 1. Improve shell polish toward approved mock
-Focus on:
-- typography
-- panel softness
-- meds/meals clarity
-- bedtime simplification
-- lower-left spacing cleanup
+### 1. Continue visual polish toward approved mock
+Remaining focus areas:
+- typography refinement
+- panel softness and glass depth
+- meds/meals clarity and hierarchy
+- bedtime/overnight simplification
 
-### 2. Add local wallpaper system
-Start with a local curated set.
+### 2. Add content-open behavior
+Past-day message attachments need an open/view state. Not yet implemented.
 
-### 3. Add content-open behavior
-Needed especially for past-day images.
+### 3. Add calendar overlay shell
+With a caregiver unlock stub. Icon is live, overlay is not.
 
-### 4. Add calendar overlay shell
-With a caregiver unlock stub.
-
-### 5. Tune guided return motion
-The step-by-step rollback is working, but the motion rhythm and nav-rail feel may still want refinement later.
-
-### 6. Begin planning async-ready wallpaper / weather boundaries
-No live API work yet, but future interfaces should stay easy to swap in.
+### 4. Tune guided return motion
+Rollback is working. Timing and nav-rail visual rhythm may benefit from later polish.
 
 ---
 
@@ -226,10 +230,12 @@ Status: implemented and confirmed working.
 Status: implemented and confirmed working, with room for later motion polish.
 
 ### Phase 4: Visual Refinement And Local Atmosphere
-- clean up lower-left meds/meals pacing and hierarchy
-- continue aligning shell spacing to the approved mock direction
-- add local wallpaper/background support
-- preserve the working navigation foundation while improving feel
+- ✅ Meds/meals overlap and layout anchoring resolved
+- ✅ Header zone (date/time/weather) refined
+- ✅ Wallpaper/background system fully implemented (AI generation, stock fallback, compression, fallback pool)
+- Typography, panel softness, glass depth — in progress
+- Content-open behavior for past-day attachments — not yet started
+- Calendar overlay / caregiver unlock shell — not yet started
 
 ---
 

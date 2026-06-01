@@ -106,13 +106,17 @@ Navigation should be understood as a rolling continuous strip of calendar days r
 - `today` is a date identity and behavioral anchor, not simply "the middle card" in a static array
 - valid resting positions are full-day landings only; the strip should never settle between dates
 
-## Wallpaper Guidance
-Most wallpapers will be chosen automatically.
-Short-term prototype plan:
-- use 10–20 locally available license-free or AI-generated backgrounds
-- backgrounds are tied to specific dates
-- backgrounds serve as chronological anchors
-- future architecture should support API-backed image retrieval with local caching
+## Wallpaper System
+Implemented. Architecture:
+- Vite plugin (`server/wallpaper-plugin.ts`) provides `/api/wallpaper/*` API routes
+- AI generation via HuggingFace FLUX.1-schnell (text-to-image for day; img2img for night to match scene)
+- Sequential day→night: day generated first, night derived from day pixels via img2img (FLUX attempted first, SDXL as fallback)
+- Stock image fallback (Unsplash → Pexels) for dates older than 31 days
+- Local fallback image pool at `public/wallpapers/fallback/` when all generation fails
+- Images stored as JPEG (compressed via sharp) in `public/wallpapers/{date}/{day|night}.jpg`
+- Manifest at `public/wallpapers/manifest.json` tracks all records
+- Wallpaper context: season, weather, tasks, holiday all feed the image prompt
+- Dev controls available in PatientShell for single-day and full-set generation
 
 ## Weather Guidance
 Prototype uses mocked local weather but must remain async-ready.
@@ -136,13 +140,16 @@ Prototype direction:
 - calendar should later reflect historical trends by color
 
 ## Important Current Development Priorities
-1. Fix day-strip navigation and landing behavior.
-2. Add finger drag / pointer drag navigation.
-3. Keep today rollback working correctly.
-4. Rebuild the shell around a rolling day-strip model rather than a hard-coded three-frame demo.
-5. Refine layout closer to design mockups.
-6. Keep architecture async-ready for future API integration.
-7. Preserve calmness and glanceability.
+1. ✅ Day-strip navigation and landing behavior — complete.
+2. ✅ Finger drag / pointer drag navigation — complete.
+3. ✅ Today rollback — complete.
+4. ✅ Rolling day-strip model — complete.
+5. ✅ Wallpaper system — complete.
+6. Visual polish toward approved mock — **active** (typography, glass depth, meds/meals hierarchy).
+7. Content-open behavior for past-day attachments — next.
+8. Calendar overlay shell with caregiver unlock stub — follows.
+9. Keep architecture async-ready for future API integration.
+10. Preserve calmness and glanceability at all times.
 
 ## Working Style Expectations for Future Agents
 - Do not redesign the product casually.

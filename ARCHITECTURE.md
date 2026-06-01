@@ -238,10 +238,10 @@ The visual direction is intentionally not generic Tailwind-dashboard styling.
 - no cartoonish or medical feel
 
 ### Known weak area
-The lower-left meds/meals zone has been repeatedly identified as a clarity hotspot and should be treated carefully.
+Typography and glass panel depth are the current visual refinement targets. Meds/meals overlap has been resolved; hierarchy clarity is still being refined.
 
 ### Current visual handoff note
-Recent work improved shell spacing and detached the bottom nav rail structurally from the main rounded panel. The biggest remaining layout issue is still the lower-left meds/meals section, where the inner meds card and outer container proportions need more refinement.
+Layout anchoring is now stable. Header zone, meds/meals, and overall spacing have been improved. The wallpaper layer is implemented and operational. Remaining visual work is focused on typographic polish and glass surface depth.
 
 ---
 
@@ -259,8 +259,10 @@ In order:
 9. Add calendar overlay shell and caregiver unlock stub.
 
 Status update:
-- items 1 through 5 are now implemented in the prototype
-- item 6 is the current active refinement area
+- items 1 through 7 are now implemented in the prototype
+- item 6 (UI polish) is actively continuing
+- item 8 (content-open behavior) is next
+- item 9 (calendar overlay) follows
 
 ### Phase 1 success criteria
 The navigation foundation phase is successful when:
