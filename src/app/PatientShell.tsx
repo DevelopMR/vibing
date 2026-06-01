@@ -6,6 +6,8 @@ import {
   todayDayRecord,
   type DayRecord,
 } from '../data/mockDays'
+import { generateWallpaper, deleteWallpaper, generateSet } from '../wallpaper/service'
+import { buildContext } from '../wallpaper/context'
 
 const AUTO_RETURN_MS = 5000
 const DRAG_COMMIT_THRESHOLD = 70
@@ -176,17 +178,79 @@ export default function PatientShell() {
     resetDragState()
   }
 
+  const selectedDay = loadedDays[safeSelectedIndex]
+  const [wallpaperBusy, setWallpaperBusy] = useState(false)
+
+  async function handleGenerateDay() {
+    if (!selectedDay || wallpaperBusy) return
+    setWallpaperBusy(true)
+    try {
+      await generateWallpaper(selectedDay.id, buildContext(selectedDay))
+      window.location.reload()
+    } finally {
+      setWallpaperBusy(false)
+    }
+  }
+
+  async function handleDeleteDay() {
+    if (!selectedDay || wallpaperBusy) return
+    setWallpaperBusy(true)
+    try {
+      await deleteWallpaper(selectedDay.id)
+      window.location.reload()
+    } finally {
+      setWallpaperBusy(false)
+    }
+  }
+
+  async function handleGenerateSet() {
+    if (wallpaperBusy) return
+    setWallpaperBusy(true)
+    const today = todayDayRecord.id
+    const entries = loadedDays
+      .filter((d) => d.id <= today)
+      .map((d) => ({ date: d.id, context: buildContext(d) }))
+    try {
+      await generateSet(entries)
+      alert('Set generation started — images will appear as they complete.')
+    } finally {
+      setWallpaperBusy(false)
+    }
+  }
+
+  const isPastOrToday = selectedDay ? selectedDay.id <= todayDayRecord.id : false
+
   return (
     <div className="flex h-screen w-screen items-center justify-center overflow-hidden bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800 px-6 py-6 text-white">
       <div className="flex w-[1280px] flex-col gap-6">
         <div className="relative h-[708px] overflow-hidden rounded-[2.2rem] border border-white/5 bg-white/5 shadow-2xl backdrop-blur-xl">
-          {/* Dev toggle */}
-          <button
-            onClick={() => setShowOvernight((prev) => !prev)}
-            className="absolute right-6 top-6 z-30 rounded-full bg-white/10 px-4 py-2 text-xs tracking-wide text-white/80 transition hover:bg-white/15"
-          >
-            {showOvernight ? 'Hide Overnight' : 'Test Overnight'}
-          </button>
+          {/* Dev controls */}
+          <div className="absolute right-6 top-6 z-30 flex items-center gap-2">
+            {isPastOrToday && (
+              <>
+                <button
+                  onClick={handleDeleteDay}
+                  disabled={wallpaperBusy}
+                  className="rounded-full bg-white/10 px-3 py-2 text-xs tracking-wide text-white/80 transition hover:bg-white/15 disabled:opacity-40"
+                >
+                  Del Wallpaper
+                </button>
+                <button
+                  onClick={handleGenerateDay}
+                  disabled={wallpaperBusy}
+                  className="rounded-full bg-white/10 px-3 py-2 text-xs tracking-wide text-white/80 transition hover:bg-white/15 disabled:opacity-40"
+                >
+                  {wallpaperBusy ? 'Generating…' : 'Gen Wallpaper'}
+                </button>
+              </>
+            )}
+            <button
+              onClick={() => setShowOvernight((prev) => !prev)}
+              className="rounded-full bg-white/10 px-4 py-2 text-xs tracking-wide text-white/80 transition hover:bg-white/15"
+            >
+              {showOvernight ? 'Hide Overnight' : 'Test Overnight'}
+            </button>
+          </div>
 
           <>
             {/* Sliding day strip */}
@@ -284,20 +348,29 @@ export default function PatientShell() {
             {formatNavLabel(previousDay, 'prev')}
           </button>
 
-          <button
-            onClick={goToday}
-            className={`rounded-full px-9 py-3 text-[1rem] tracking-[0.14em] text-white/90 backdrop-blur-md transition-all ease-out hover:bg-white/15 ${
-              isGuidedReturning
-                ? 'bg-white/16 shadow-[0_0_0_1px_rgba(255,255,255,0.08),0_0_22px_rgba(255,255,255,0.08)]'
-                : 'bg-white/10'
-            }`}
-            style={{
-              transform: `translateX(${todayButtonOffset}px) scale(${isGuidedReturning ? 1.03 : 1})`,
-              transitionDuration: `${stripTransitionDurationMs}ms`,
-            }}
-          >
-            TODAY
-          </button>
+          <div className="flex flex-col items-center gap-2">
+            <button
+              onClick={goToday}
+              className={`rounded-full px-9 py-3 text-[1rem] tracking-[0.14em] text-white/90 backdrop-blur-md transition-all ease-out hover:bg-white/15 ${
+                isGuidedReturning
+                  ? 'bg-white/16 shadow-[0_0_0_1px_rgba(255,255,255,0.08),0_0_22px_rgba(255,255,255,0.08)]'
+                  : 'bg-white/10'
+              }`}
+              style={{
+                transform: `translateX(${todayButtonOffset}px) scale(${isGuidedReturning ? 1.03 : 1})`,
+                transitionDuration: `${stripTransitionDurationMs}ms`,
+              }}
+            >
+              TODAY
+            </button>
+            <button
+              onClick={handleGenerateSet}
+              disabled={wallpaperBusy}
+              className="text-[0.7rem] tracking-widest text-white/35 transition hover:text-white/60 disabled:opacity-30"
+            >
+              {wallpaperBusy ? 'WORKING…' : 'GEN ALL WALLPAPERS'}
+            </button>
+          </div>
 
           <button
             onClick={goNext}

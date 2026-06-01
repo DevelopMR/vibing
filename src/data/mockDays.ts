@@ -35,7 +35,7 @@ export type DayRecord = {
 
 const DAY_MS = 24 * 60 * 60 * 1000
 const RANGE_DAYS = 14
-const TODAY_ID = '2026-03-24'
+const TODAY_ID = new Date().toISOString().slice(0, 10)
 
 const weekdayFormatter = new Intl.DateTimeFormat('en-US', {
   weekday: 'long',

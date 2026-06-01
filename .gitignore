@@ -1,0 +1,23 @@
+# Dependencies
+node_modules/
+
+# Environment — contains real API keys
+.env
+.env.local
+.env.*.local
+
+# Build output
+dist/
+
+# Generated wallpaper images (large binaries, regenerated on demand)
+public/wallpapers/
+
+# Editor / OS
+.DS_Store
+Thumbs.db
+*.suo
+.vscode/settings.json
+
+# Logs
+*.log
+npm-debug.log*
