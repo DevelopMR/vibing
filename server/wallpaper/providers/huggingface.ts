@@ -3,7 +3,11 @@ import { InferenceClient } from '@huggingface/inference'
 const MODEL = 'black-forest-labs/FLUX.1-schnell'
 const RETRY_DELAYS_MS = [12000, 20000, 30000]
 
-export async function generateImage(prompt: string, token: string): Promise<Buffer> {
+export async function generateImage(
+  prompt: string,
+  token: string,
+  seed?: number,
+): Promise<Buffer> {
   const client = new InferenceClient(token)
   let lastError: Error = new Error('HuggingFace generation failed')
 
@@ -17,6 +21,7 @@ export async function generateImage(prompt: string, token: string): Promise<Buff
           guidance_scale: 0,
           width: 1280,
           height: 720,
+          ...(seed !== undefined ? { seed } : {}),
         },
       })
       return Buffer.from(await blob.arrayBuffer())

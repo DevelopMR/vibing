@@ -1,6 +1,6 @@
 import type { WallpaperRecord, WallpaperContext } from '../../src/wallpaper/types.js'
 import { getHoliday } from './holidays.js'
-import { buildDayPrompt, buildNightPrompt, buildStockKeywords } from './prompt.js'
+import { buildDayPrompt, buildNightPrompt, buildStockKeywords, dateSeed } from './prompt.js'
 import { generateImage } from './providers/huggingface.js'
 import { fetchStockImageUrl } from './providers/stock.js'
 import {
@@ -10,6 +10,7 @@ import {
   deleteRecord,
   datesOlderThan,
   readManifest,
+  getRandomFallback,
 } from './storage.js'
 
 // Days before which we use stock instead of AI generation
@@ -76,14 +77,24 @@ export async function generateWallpaper(
     console.log(`[wallpaper] Generating day: ${dayPrompt}`)
     console.log(`[wallpaper] Generating night: ${nightPrompt}`)
 
-    const [dayBuffer, nightBuffer] = await Promise.all([
-      generateImage(dayPrompt, env.hfToken),
-      generateImage(nightPrompt, env.hfToken),
-    ])
-
-    dayUrl = await saveGeneratedImage(ctx.date, 'day', dayBuffer)
-    nightUrl = await saveGeneratedImage(ctx.date, 'night', nightBuffer)
-    source = 'generated'
+    try {
+      const seed = dateSeed(ctx.date)
+      const [dayBuffer, nightBuffer] = await Promise.all([
+        generateImage(dayPrompt, env.hfToken, seed),
+        generateImage(nightPrompt, env.hfToken, seed),
+      ])
+      dayUrl = await saveGeneratedImage(ctx.date, 'day', dayBuffer)
+      nightUrl = await saveGeneratedImage(ctx.date, 'night', nightBuffer)
+      source = 'generated'
+    } catch (genErr) {
+      console.warn('[wallpaper] Generation failed, trying fallback:', genErr)
+      const fbDay = await getRandomFallback('day')
+      const fbNight = await getRandomFallback('night')
+      if (!fbDay || !fbNight) throw genErr
+      dayUrl = fbDay
+      nightUrl = fbNight
+      source = 'fallback'
+    }
   }
 
   const record: WallpaperRecord = {
