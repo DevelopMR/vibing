@@ -1,7 +1,7 @@
 import type { WallpaperRecord, WallpaperContext } from '../../src/wallpaper/types.js'
 import { getHoliday } from './holidays.js'
 import { buildDayPrompt, buildNightPrompt, buildStockKeywords, dateSeed } from './prompt.js'
-import { generateImage } from './providers/huggingface.js'
+import { generateImage, generateNightFromDay } from './providers/huggingface.js'
 import { fetchStockImageUrl } from './providers/stock.js'
 import {
   getRecord,
@@ -79,12 +79,14 @@ export async function generateWallpaper(
 
     try {
       const seed = dateSeed(ctx.date)
-      const [dayBuffer, nightBuffer] = await Promise.all([
-        generateImage(dayPrompt, env.hfToken, seed),
-        generateImage(nightPrompt, env.hfToken, seed),
+      // Day first (text-to-image), then night derived from the day image (img2img)
+      // so both share the exact same scene composition
+      const dayBuffer = await generateImage(dayPrompt, env.hfToken, seed)
+      const nightBuffer = await generateNightFromDay(dayBuffer, nightPrompt, env.hfToken, seed)
+      ;[dayUrl, nightUrl] = await Promise.all([
+        saveGeneratedImage(ctx.date, 'day', dayBuffer),
+        saveGeneratedImage(ctx.date, 'night', nightBuffer),
       ])
-      dayUrl = await saveGeneratedImage(ctx.date, 'day', dayBuffer)
-      nightUrl = await saveGeneratedImage(ctx.date, 'night', nightBuffer)
       source = 'generated'
     } catch (genErr) {
       console.warn('[wallpaper] Generation failed, trying fallback:', genErr)
